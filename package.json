@@ -1,6 +1,9 @@
 {
   "name": "cross-cloud-orchestrator-root",
   "version": "1.0.0",
+  "description": "A resilient Meta-Orchestrator for cross-cloud serverless workflows.",
+  "author": "Kshitijpalsinghtomar",
+  "license": "MIT",
   "private": true,
   "workspaces": [
     "packages/*"
