@@ -3,9 +3,11 @@
     "version": "1.0.0",
     "main": "dist/index.js",
     "dependencies": {
+        "@cc-orch/adapters": "^1.0.0",
         "@cc-orch/core": "*",
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.6",
+        "axios": "^1.13.2",
         "body-parser": "^2.2.1",
         "cors": "^2.8.5",
         "express": "^5.2.1"

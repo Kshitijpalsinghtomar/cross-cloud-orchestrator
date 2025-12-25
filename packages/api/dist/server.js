@@ -1,60 +1,49 @@
-import express, { Request, Response } from 'express';
-import cors from 'cors';
-import {
-    WorkflowEngine,
-    InMemoryStateStore,
-    WorkflowDefinition,
-    CloudFunctionAdapter
-} from '@cc-orch/core';
-import { MockAdapter } from '@cc-orch/adapters';
-
-const app = express();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
+const core_1 = require("@cc-orch/core");
+const adapters_1 = require("@cc-orch/adapters");
+const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
-
-app.use(cors());
-app.use(express.json());
-
+app.use((0, cors_1.default)());
+app.use(express_1.default.json());
 // --- Setup Orchestrator ---
-const stateStore = new InMemoryStateStore();
-const adapters = new Map<string, CloudFunctionAdapter>();
-
+const stateStore = new core_1.InMemoryStateStore();
+const adapters = new Map();
 // Register Mocks for demo purposes
-const awsMock = new MockAdapter();
+const awsMock = new adapters_1.MockAdapter();
 awsMock.providerName = 'AWS'; // Hack to set correct name
 awsMock.registerFunction('my-func', (input) => ({ msg: "Hello from AWS", input }));
 // Simulate AWS failure for specific function ID
 awsMock.registerFunction('flakey-func', () => { throw new Error("AWS Down"); });
-
-const gcpMock = new MockAdapter();
+const gcpMock = new adapters_1.MockAdapter();
 gcpMock.providerName = 'GCP';
 gcpMock.registerFunction('flakey-func', (input) => ({ msg: "Saved by GCP", input }));
-
 adapters.set('AWS', awsMock);
 adapters.set('GCP', gcpMock);
-
-const engine = new WorkflowEngine(stateStore, adapters);
-
+const engine = new core_1.WorkflowEngine(stateStore, adapters);
 // --- Routes ---
-
 // 1. Submit/Start Workflow
-app.post('/executions', async (req: Request, res: Response) => {
+app.post('/executions', async (req, res) => {
     try {
         const { workflow, input } = req.body;
-
         if (!workflow || !workflow.id || !workflow.steps) {
             res.status(400).json({ error: "Invalid workflow definition" });
             return;
         }
-
-        const executionId = await engine.startWorkflow(workflow as WorkflowDefinition, input || {});
+        const executionId = await engine.startWorkflow(workflow, input || {});
         res.status(201).json({ executionId, status: "PENDING" });
-    } catch (error: any) {
+    }
+    catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
-
 // 2. Get Execution Status
-app.get('/executions/:id', async (req: Request, res: Response) => {
+app.get('/executions/:id', async (req, res) => {
     try {
         const execution = await stateStore.getExecution(req.params.id);
         if (!execution) {
@@ -62,16 +51,16 @@ app.get('/executions/:id', async (req: Request, res: Response) => {
             return;
         }
         res.json(execution);
-    } catch (error: any) {
+    }
+    catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
-
 // 3. Health Check
 app.get('/health', (req, res) => {
     res.json({ status: "OK", version: "1.0.0" });
 });
-
 app.listen(port, () => {
     console.log(`Orchestrator API running on http://localhost:${port}`);
 });
+//# sourceMappingURL=server.js.map
