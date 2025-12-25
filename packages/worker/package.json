@@ -1,0 +1,12 @@
+{
+    "name": "@cc-orch/worker",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "dependencies": {
+        "@cc-orch/core": "*",
+        "@cc-orch/adapters": "*"
+    },
+    "scripts": {
+        "build": "tsc"
+    }
+}

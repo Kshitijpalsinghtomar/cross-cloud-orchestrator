@@ -1,0 +1,17 @@
+{
+    "name": "@cc-orch/api",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "dependencies": {
+        "@cc-orch/core": "*",
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.6",
+        "body-parser": "^2.2.1",
+        "cors": "^2.8.5",
+        "express": "^5.2.1"
+    },
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/server.js"
+    }
+}
