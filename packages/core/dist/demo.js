@@ -21,7 +21,14 @@ class LocalMockAdapter {
             data: { processedBy: this.providerName, result: "Success" }
         };
     }
-    async checkHealth() { return !this.shouldFail; }
+    async checkHealth() {
+        return {
+            status: this.shouldFail ? 'Offline' : 'Online',
+            latencyMs: 10,
+            region: 'local-demo',
+            lastChecked: new Date()
+        };
+    }
 }
 async function runDemo() {
     console.log("=== Starting Cross-Cloud Orchestrator Demo ===");

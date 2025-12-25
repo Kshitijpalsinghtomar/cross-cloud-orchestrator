@@ -7,12 +7,13 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const core_1 = require("@cc-orch/core");
 const adapters_1 = require("@cc-orch/adapters");
+const prisma_store_1 = require("./store/prisma-store");
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // --- Setup Orchestrator ---
-const stateStore = new core_1.InMemoryStateStore();
+const stateStore = new prisma_store_1.PrismaStateStore();
 const adapters = new Map();
 // Register Mocks for demo purposes
 const awsMock = new adapters_1.MockAdapter();
@@ -42,7 +43,17 @@ app.post('/executions', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-// 2. Get Execution Status
+// 2. List Executions
+app.get('/executions', async (req, res) => {
+    try {
+        const executions = await stateStore.listExecutions();
+        res.json(executions);
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+// 3. Get Execution Status
 app.get('/executions/:id', async (req, res) => {
     try {
         const execution = await stateStore.getExecution(req.params.id);
@@ -57,8 +68,20 @@ app.get('/executions/:id', async (req, res) => {
     }
 });
 // 3. Health Check
-app.get('/health', (req, res) => {
-    res.json({ status: "OK", version: "1.0.0" });
+app.get('/health', async (req, res) => {
+    const providerChecks = await Promise.all(Array.from(adapters.values()).map(async (adapter) => {
+        const health = await adapter.checkHealth();
+        return {
+            provider: adapter.providerName,
+            ...health
+        };
+    }));
+    const overallStatus = providerChecks.every(p => p.status === 'Online') ? 'OK' : 'DEGRADED';
+    res.json({
+        status: overallStatus,
+        version: "1.0.0",
+        providers: providerChecks
+    });
 });
 app.listen(port, () => {
     console.log(`Orchestrator API running on http://localhost:${port}`);

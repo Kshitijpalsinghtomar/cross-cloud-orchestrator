@@ -2,11 +2,12 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import {
     WorkflowEngine,
-    InMemoryStateStore,
     WorkflowDefinition,
     CloudFunctionAdapter
 } from '@cc-orch/core';
 import { MockAdapter } from '@cc-orch/adapters';
+
+import { PrismaStateStore } from './store/prisma-store';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -15,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 // --- Setup Orchestrator ---
-const stateStore = new InMemoryStateStore();
+const stateStore = new PrismaStateStore();
 const adapters = new Map<string, CloudFunctionAdapter>();
 
 // Register Mocks for demo purposes
@@ -53,7 +54,19 @@ app.post('/executions', async (req: Request, res: Response) => {
     }
 });
 
-// 2. Get Execution Status
+
+
+// 2. List Executions
+app.get('/executions', async (req: Request, res: Response) => {
+    try {
+        const executions = await stateStore.listExecutions();
+        res.json(executions);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 3. Get Execution Status
 app.get('/executions/:id', async (req: Request, res: Response) => {
     try {
         const execution = await stateStore.getExecution(req.params.id);
@@ -68,8 +81,24 @@ app.get('/executions/:id', async (req: Request, res: Response) => {
 });
 
 // 3. Health Check
-app.get('/health', (req, res) => {
-    res.json({ status: "OK", version: "1.0.0" });
+app.get('/health', async (req, res) => {
+    const providerChecks = await Promise.all(
+        Array.from(adapters.values()).map(async (adapter) => {
+            const health = await adapter.checkHealth();
+            return {
+                provider: adapter.providerName,
+                ...health
+            };
+        })
+    );
+
+    const overallStatus = providerChecks.every(p => p.status === 'Online') ? 'OK' : 'DEGRADED';
+
+    res.json({
+        status: overallStatus,
+        version: "1.0.0",
+        providers: providerChecks
+    });
 });
 
 app.listen(port, () => {

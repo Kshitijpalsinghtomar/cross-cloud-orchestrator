@@ -54,9 +54,29 @@ export class AwsAdapter implements CloudFunctionAdapter {
         }
     }
 
-    async checkHealth(): Promise<boolean> {
-        // Simple check: List functions or GetAccountSettings
-        // For now, just assume true if client is init
-        return true;
+    async checkHealth(): Promise<import('@cc-orch/core').HealthCheckDetail> {
+        try {
+            const start = Date.now();
+            // ListFunctions is a lightweight call to verify credentials and connectivity
+            const { ListFunctionsCommand } = await import("@aws-sdk/client-lambda");
+            const command = new ListFunctionsCommand({ MaxItems: 1 });
+            await this.client.send(command);
+            const latency = Date.now() - start;
+
+            return {
+                status: 'Online',
+                latencyMs: latency,
+                region: await this.client.config.region(),
+                lastChecked: new Date()
+            };
+        } catch (err: any) {
+            return {
+                status: 'Offline',
+                latencyMs: 0,
+                region: await this.client.config.region(),
+                lastChecked: new Date(),
+                error: err.message
+            };
+        }
     }
 }

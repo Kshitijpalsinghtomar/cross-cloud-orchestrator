@@ -7,5 +7,5 @@ export declare class AwsAdapter implements CloudFunctionAdapter {
         secretAccessKey: string;
     });
     invoke(functionId: string, payload: any, options?: InvokeOptions): Promise<InvokeResult>;
-    checkHealth(): Promise<boolean>;
+    checkHealth(): Promise<import('@cc-orch/core').HealthCheckDetail>;
 }

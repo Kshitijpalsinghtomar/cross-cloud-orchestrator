@@ -51,9 +51,29 @@ class AwsAdapter {
         }
     }
     async checkHealth() {
-        // Simple check: List functions or GetAccountSettings
-        // For now, just assume true if client is init
-        return true;
+        try {
+            const start = Date.now();
+            // ListFunctions is a lightweight call to verify credentials and connectivity
+            const { ListFunctionsCommand } = await import("@aws-sdk/client-lambda");
+            const command = new ListFunctionsCommand({ MaxItems: 1 });
+            await this.client.send(command);
+            const latency = Date.now() - start;
+            return {
+                status: 'Online',
+                latencyMs: latency,
+                region: await this.client.config.region(),
+                lastChecked: new Date()
+            };
+        }
+        catch (err) {
+            return {
+                status: 'Offline',
+                latencyMs: 0,
+                region: await this.client.config.region(),
+                lastChecked: new Date(),
+                error: err.message
+            };
+        }
     }
 }
 exports.AwsAdapter = AwsAdapter;

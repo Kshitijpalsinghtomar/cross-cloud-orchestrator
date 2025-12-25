@@ -47,6 +47,7 @@ export interface WorkflowExecution {
     context: Record<string, any>;
     history: ExecutionEvent[];
     startedAt: Date;
+    finishedAt?: Date;
     updatedAt: Date;
 }
 

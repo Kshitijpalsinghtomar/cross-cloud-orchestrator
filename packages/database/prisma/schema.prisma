@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model WorkflowDefinition {
+  id        String   @id @default(uuid())
+  name      String
+  steps     String   // JSON stringified
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  executions Execution[]
+}
+
+model Execution {
+  id          String   @id @default(uuid())
+  workflowId  String
+  status      String   // PENDING, RUNNING, COMPLETED, FAILED
+  context     String   // JSON stringified
+  startedAt   DateTime @default(now())
+  finishedAt  DateTime?
+  
+  workflow    WorkflowDefinition @relation(fields: [workflowId], references: [id])
+  logs        ExecutionLog[]
+}
+
+model ExecutionLog {
+  id          String   @id @default(uuid())
+  executionId String
+  type        String   // STEP_START, STEP_END, etc.
+  stepId      String?
+  details     String?  // JSON stringified
+  timestamp   DateTime @default(now())
+
+  execution   Execution @relation(fields: [executionId], references: [id])
+}

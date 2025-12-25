@@ -21,7 +21,14 @@ class LocalMockAdapter implements CloudFunctionAdapter {
         };
     }
 
-    async checkHealth() { return !this.shouldFail; }
+    async checkHealth(): Promise<import('./interfaces').HealthCheckDetail> {
+        return {
+            status: this.shouldFail ? 'Offline' : 'Online',
+            latencyMs: 10,
+            region: 'local-demo',
+            lastChecked: new Date()
+        };
+    }
 }
 
 async function runDemo() {

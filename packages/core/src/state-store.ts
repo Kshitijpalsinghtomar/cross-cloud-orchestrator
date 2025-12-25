@@ -1,9 +1,10 @@
-import { WorkflowExecution, ExecutionEvent } from './types';
+import { WorkflowExecution, ExecutionEvent, WorkflowDefinition } from './types';
 
 export interface StateStore {
-    createExecution(execution: WorkflowExecution): Promise<void>;
+    createExecution(execution: WorkflowExecution, definition?: WorkflowDefinition): Promise<void>;
     updateExecution(execution: WorkflowExecution): Promise<void>;
     getExecution(executionId: string): Promise<WorkflowExecution | null>;
+    listExecutions(): Promise<WorkflowExecution[]>;
     addHistoryEvent(executionId: string, event: ExecutionEvent): Promise<void>;
 
     /**
@@ -20,7 +21,7 @@ export class InMemoryStateStore implements StateStore {
     private executions = new Map<string, WorkflowExecution>();
     private locks = new Map<string, number>(); // key -> expiration timestamp
 
-    async createExecution(execution: WorkflowExecution): Promise<void> {
+    async createExecution(execution: WorkflowExecution, definition?: WorkflowDefinition): Promise<void> {
         this.executions.set(execution.executionId, { ...execution });
     }
 
@@ -32,6 +33,10 @@ export class InMemoryStateStore implements StateStore {
     async getExecution(executionId: string): Promise<WorkflowExecution | null> {
         const exec = this.executions.get(executionId);
         return exec ? { ...exec } : null;
+    }
+
+    async listExecutions(): Promise<WorkflowExecution[]> {
+        return Array.from(this.executions.values()).sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
     }
 
     async addHistoryEvent(executionId: string, event: ExecutionEvent): Promise<void> {

@@ -21,7 +21,7 @@ export class WorkflowEngine {
             updatedAt: new Date()
         };
 
-        await this.stateStore.createExecution(execution);
+        await this.stateStore.createExecution(execution, def);
         await this.stateStore.addHistoryEvent(executionId, {
             timestamp: new Date(),
             type: 'WORKFLOW_STARTED',
@@ -74,6 +74,7 @@ export class WorkflowEngine {
             }
 
             execution.status = 'COMPLETED';
+            execution.finishedAt = new Date();
             await this.stateStore.updateExecution(execution);
             await this.stateStore.addHistoryEvent(executionId, {
                 timestamp: new Date(),

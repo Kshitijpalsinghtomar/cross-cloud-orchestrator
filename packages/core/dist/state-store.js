@@ -4,7 +4,7 @@ exports.InMemoryStateStore = void 0;
 class InMemoryStateStore {
     executions = new Map();
     locks = new Map(); // key -> expiration timestamp
-    async createExecution(execution) {
+    async createExecution(execution, definition) {
         this.executions.set(execution.executionId, { ...execution });
     }
     async updateExecution(execution) {
@@ -14,6 +14,9 @@ class InMemoryStateStore {
     async getExecution(executionId) {
         const exec = this.executions.get(executionId);
         return exec ? { ...exec } : null;
+    }
+    async listExecutions() {
+        return Array.from(this.executions.values()).sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
     }
     async addHistoryEvent(executionId, event) {
         const exec = this.executions.get(executionId);

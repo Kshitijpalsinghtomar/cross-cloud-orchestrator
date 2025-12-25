@@ -37,7 +37,18 @@ export class MockAdapter implements CloudFunctionAdapter {
         }
     }
 
-    async checkHealth(): Promise<boolean> {
-        return true;
+    async checkHealth(): Promise<import('@cc-orch/core').HealthCheckDetail> {
+        // Simulate random latency between 20ms and 150ms
+        const latency = Math.floor(Math.random() * 130) + 20;
+
+        // 5% chance of being "Degraded" for realism
+        const isDegraded = Math.random() < 0.05;
+
+        return {
+            status: isDegraded ? 'Degraded' : 'Online',
+            latencyMs: latency,
+            region: 'local-mock',
+            lastChecked: new Date()
+        };
     }
 }

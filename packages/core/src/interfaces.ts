@@ -10,6 +10,14 @@ export interface InvokeResult {
     providerRequestId?: string;
 }
 
+export interface HealthCheckDetail {
+    status: 'Online' | 'Offline' | 'Degraded';
+    latencyMs: number;
+    region: string;
+    lastChecked: Date;
+    error?: string;
+}
+
 export interface CloudFunctionAdapter {
     providerName: string;
 
@@ -21,7 +29,7 @@ export interface CloudFunctionAdapter {
     invoke(functionId: string, payload: any, options?: InvokeOptions): Promise<InvokeResult>;
 
     /**
-     * Basic connectivity check to the cloud provider's region/service.
+     * Checks connectivity and latency to the cloud provider.
      */
-    checkHealth(): Promise<boolean>;
+    checkHealth(): Promise<HealthCheckDetail>;
 }

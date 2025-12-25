@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+:root {
+  /* Soft Light (Day) */
+  --bg-app: #f8fafc;
+  /* Slate-50 */
+  --bg-panel: #ffffff;
+  /* White */
+  --bg-card: #ffffff;
+  /* White */
+  --bg-sidebar: #ffffff;
+  /* White */
+  --border-main: #e2e8f0;
+  /* Slate-200 */
+  --border-subtle: #f1f5f9;
+  /* Slate-100 */
+
+  /* Text - High Contrast but not #000 */
+  --text-main: #334155;
+  /* Slate-700 */
+  --text-muted: #64748b;
+  /* Slate-500 */
+  --text-inverse: #f8fafc;
+  /* Slate-50 */
+
+  /* Primary Brand */
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-500: #3b82f6;
+  /* Blue-500 */
+  --primary-600: #2563eb;
+  /* Blue-600 */
+  --primary-700: #1d4ed8;
+  /* Blue-700 */
+
+  /* Status Colors (Soft) */
+  --success-bg: #ecfdf5;
+  /* Emerald-50 */
+  --success-text: #059669;
+  /* Emerald-600 */
+  --error-bg: #fef2f2;
+  /* Rose-50 */
+  --error-text: #e11d48;
+  /* Rose-600 */
+  --neutral-bg: #f1f5f9;
+  /* Slate-100 */
+}
+
+.dark {
+  /* Soft Dark (Night) */
+  --bg-app: #0f172a;
+  /* Slate-900 */
+  --bg-panel: #1e293b;
+  /* Slate-800 */
+  --bg-card: #1e293b;
+  /* Slate-800 */
+  --bg-sidebar: #0f172a;
+  /* Slate-900 */
+  --border-main: #334155;
+  /* Slate-700 */
+  --border-subtle: #1e293b;
+  /* Slate-800 */
+
+  /* Text - High Legibility but not #FFF */
+  --text-main: #cbd5e1;
+  /* Slate-300 */
+  --text-muted: #94a3b8;
+  /* Slate-400 */
+  --text-inverse: #0f172a;
+  /* Slate-900 */
+
+  /* Primary Brand */
+  --primary-50: #172554;
+  /* Blue-950 */
+  --primary-100: #1e3a8a;
+  /* Blue-900 */
+  --primary-500: #3b82f6;
+  /* Blue-500 */
+  --primary-600: #60a5fa;
+  /* Blue-400 (Brighter for dark mode) */
+  --primary-700: #93c5fd;
+  /* Blue-300 */
+
+  /* Status Colors (Soft Dark) */
+  --success-bg: #064e3b;
+  /* Emerald-900 */
+  --success-text: #34d399;
+  /* Emerald-400 */
+  --error-bg: #881337;
+  /* Rose-900 */
+  --error-text: #fb7185;
+  /* Rose-400 */
+  --neutral-bg: #334155;
+  /* Slate-700 */
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Utilities */
+.glass-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-main);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.card-base {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+}
+
+.text-main {
+  color: var(--text-main);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  /* Slate-300 */
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+  /* Slate-600 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+  /* Slate-400 */
+}
