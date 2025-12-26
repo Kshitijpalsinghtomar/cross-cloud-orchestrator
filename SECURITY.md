@@ -15,7 +15,7 @@ We take the security of this system seriously. If you believe you have found a s
 
 ### Process
 
-1.  Please email `security@example.com` (replace with your actual security contact if available).
+1.  Please email `kshitijpalsinghtomar@gmail.com`.
 2.  Include detailed information about the vulnerability, including steps to reproduce.
 3.  We will respond within 48 hours to acknowledge your report.
 4.  We will investigate and provide a timeline for a fix.
