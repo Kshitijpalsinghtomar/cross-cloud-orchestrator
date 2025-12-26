@@ -113,3 +113,41 @@ dist/
 output.txt
 api-test-output.txt
 server-log.txt
+
+# ==================
+# Polyglot Languages
+# ==================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+.eggs/
+*.egg-info/
+.pytest_cache/
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.dylib
+
+# Rust
+target/
+Cargo.lock
+**/*.rs.bk
+
+# C# / .NET
+bin/
+obj/
+*.user
+*.userosscache
+*.suo
+*.nupkg
+packages/*/bin/
+packages/*/obj/

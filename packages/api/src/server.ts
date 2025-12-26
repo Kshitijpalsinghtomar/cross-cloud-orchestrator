@@ -115,6 +115,66 @@ app.get('/dashboard/summary', async (req: Request, res: Response) => {
     }
 });
 
+// 5. Deep System Health (calls Rust service)
+app.get('/system/health-deep', async (req: Request, res: Response) => {
+    try {
+        const healthCheckerUrl = process.env.HEALTH_CHECKER_URL || 'http://localhost:8081';
+
+        const response = await fetch(`${healthCheckerUrl}/health/deep`);
+
+        if (response.ok) {
+            const data = await response.json();
+            res.json(data);
+        } else {
+            res.status(503).json({
+                error: "Health checker service unavailable",
+                fallback: {
+                    overall_status: "unknown",
+                    message: "Deep health check requires Rust service"
+                }
+            });
+        }
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 6. Send Notification (calls C# service)
+app.post('/notifications/send', async (req: Request, res: Response) => {
+    try {
+        const notificationUrl = process.env.NOTIFICATION_URL || 'http://localhost:8082';
+
+        const response = await fetch(`${notificationUrl}/notifications/send`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(req.body)
+        });
+
+        const data = await response.json();
+        res.status(response.status).json(data);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 7. Bulk Notifications (calls C# service)
+app.post('/notifications/bulk', async (req: Request, res: Response) => {
+    try {
+        const notificationUrl = process.env.NOTIFICATION_URL || 'http://localhost:8082';
+
+        const response = await fetch(`${notificationUrl}/notifications/bulk`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(req.body)
+        });
+
+        const data = await response.json();
+        res.status(response.status).json(data);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.get('/health', async (req, res) => {
     const providerChecks = await Promise.all(
         Array.from(adapters.values()).map(async (adapter) => {

@@ -11,11 +11,14 @@
   "scripts": {
     "build": "tsc -b",
     "test": "jest",
-    "build": "tsc -b",
-    "test": "jest",
     "lint": "eslint . --ext .ts",
-    "start:analytics": "cd packages/analytics-engine && uvicorn main:app --reload",
-    "start:monitor": "cd packages/resource-monitor && go run main.go"
+    "start:api": "node dist/packages/api/src/server.js",
+    "start:analytics": "cd packages/analytics-engine && uvicorn main:app --reload --port 8999",
+    "start:monitor": "cd packages/resource-monitor && go run main.go",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
   },
   "devDependencies": {
     "typescript": "^5.3.3",

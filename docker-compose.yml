@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # Node.js - Main Orchestrator API
   api:
     build: 
       context: .
@@ -10,24 +11,70 @@ services:
     environment:
       - PORT=3000
       - ANALYTICS_URL=http://analytics:8000
-      - MONITOR_URL=http://monitor:8080 # Monitor is background, but if we add API later
+      - MONITOR_URL=http://monitor:8080
+      - HEALTH_CHECKER_URL=http://health-checker:8081
+      - NOTIFICATION_URL=http://notification:8082
     depends_on:
       - analytics
       - monitor
+      - health-checker
+      - notification
+    networks:
+      - app-network
 
+  # Python - Analytics Engine
   analytics:
     build: ./packages/analytics-engine
     ports:
       - "8000:8000"
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
+  # Go - Resource Monitor
   monitor:
     build: ./packages/resource-monitor
-    # No ports exposed needed if it's just a background worker, 
-    # but strictly speaking we might want to expose metrics later.
+    ports:
+      - "8080:8080"
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Rust - Health Checker (Deep Health Analysis)
+  health-checker:
+    build: ./packages/health-checker
+    ports:
+      - "8081:8081"
+    environment:
+      - ANALYTICS_URL=http://analytics:8000/health
+      - MONITOR_URL=http://monitor:8080/health
+      - API_URL=http://api:3000/health
+    networks:
+      - app-network
+    depends_on:
+      - analytics
+      - monitor
+
+  # C# - Notification Service
+  notification:
+    build: ./packages/notification-service
+    ports:
+      - "8082:8082"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   app-network:
