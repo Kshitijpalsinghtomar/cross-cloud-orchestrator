@@ -5,6 +5,7 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "build": "tsc",
+        "postinstall": "prisma generate",
         "db:generate": "prisma generate",
         "db:push": "prisma db push",
         "db:studio": "prisma studio"
