@@ -1,21 +1,11 @@
 {
-    "compilerOptions": {
-        "target": "ES2022",
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
-        "sourceMap": true,
-        "declaration": true,
-        "composite": true,
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "rootDir": ".",
-        "outDir": "./dist"
-    },
-    "exclude": [
-        "node_modules",
-        "dist",
-        "packages/dashboard"
+    "files": [],
+    "references": [
+        { "path": "./packages/core" },
+        { "path": "./packages/database" },
+        { "path": "./packages/adapters" },
+        { "path": "./packages/api" },
+        { "path": "./packages/worker" },
+        { "path": "./packages/cli" }
     ]
 }
