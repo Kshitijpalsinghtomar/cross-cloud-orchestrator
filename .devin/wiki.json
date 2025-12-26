@@ -1,0 +1,302 @@
+{
+  "repo_notes": [
+    {
+      "content": ""
+    }
+  ],
+  "pages": [
+    {
+      "title": "Overview",
+      "purpose": "Introduce the Cross-Cloud Serverless Orchestrator, summarizing its purpose as a resilient meta-orchestrator for managing workflows across AWS, GCP, and Azure with automatic failover.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Architecture",
+      "purpose": "High-level overview of the system architecture, including the polyglot microservices design and how components interact",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Workflow Engine and State Management",
+      "purpose": "Deep dive into the workflow engine's execution model, state machine, and persistence layer using Prisma",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Cloud Adapters and Multi-Cloud Support",
+      "purpose": "Explain the adapter pattern for cloud-agnostic integration with AWS, GCP, and Azure, including the MockAdapter for testing",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Automatic Failover Mechanism",
+      "purpose": "Detail the cascading failover logic that routes workflows across providers when failures occur",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Polyglot Service Integration",
+      "purpose": "Describe how TypeScript, Python, Go, Rust, and C# services communicate and integrate within the system",
+      "parent": "Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Core TypeScript Components",
+      "purpose": "Overview of the TypeScript-based core packages that form the orchestration foundation",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "API Server",
+      "purpose": "Document the Express-based API server that serves as the main gateway and workflow engine interface",
+      "parent": "Core TypeScript Components",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Core Package (@cc-orch/core)",
+      "purpose": "Explain the core package's modules: types, state-store, interfaces, and workflow-engine",
+      "parent": "Core TypeScript Components",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Database Layer",
+      "purpose": "Document the Prisma-based persistence layer for workflow state and execution history",
+      "parent": "Core TypeScript Components",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Adapters Package",
+      "purpose": "Detail the cloud adapter implementations including MockAdapter, AWS, GCP, and Azure adapters",
+      "parent": "Core TypeScript Components",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Polyglot Microservices",
+      "purpose": "Overview of the four specialized services implemented in different languages",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Analytics Engine (Python)",
+      "purpose": "Document the Python/FastAPI analytics service for data processing and KPI calculation",
+      "parent": "Polyglot Microservices",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Resource Monitor (Go)",
+      "purpose": "Document the Go-based service for monitoring CPU, memory, and system health",
+      "parent": "Polyglot Microservices",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Health Checker (Rust)",
+      "purpose": "Detail the Rust/Actix-web service for deep, concurrent health analysis across all services",
+      "parent": "Polyglot Microservices",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Notification Service (C#)",
+      "purpose": "Document the C#/.NET service for enterprise notifications including email and SMS",
+      "parent": "Polyglot Microservices",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "User Interfaces",
+      "purpose": "Overview of the user-facing interfaces for interacting with the orchestrator",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "React Dashboard",
+      "purpose": "Document the React-based dashboard for monitoring workflows, system health, and testing failover scenarios",
+      "parent": "User Interfaces",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "CLI Tool (cc-orch)",
+      "purpose": "Document the command-line interface for scaffolding workflows, checking health, and deploying the stack",
+      "parent": "User Interfaces",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Development Guide",
+      "purpose": "Comprehensive guide for developers contributing to or working with the codebase",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Getting Started",
+      "purpose": "Initial setup instructions, prerequisites, and quick start guide for local development",
+      "parent": "Development Guide",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Project Structure",
+      "purpose": "Explain the monorepo organization, package directories, and file structure conventions",
+      "parent": "Development Guide",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Building and Testing",
+      "purpose": "Document the build process for each language, running tests, and CI pipeline",
+      "parent": "Development Guide",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Docker Development",
+      "purpose": "Guide for using Docker Compose for local development and testing the full stack",
+      "parent": "Development Guide",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Contributing Guidelines",
+      "purpose": "Standards for code contributions, including linting rules, commit conventions, and pull request process",
+      "parent": "Development Guide",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Deployment and Operations",
+      "purpose": "Guide for deploying and operating the orchestrator in production environments",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Docker Deployment",
+      "purpose": "Instructions for deploying via Docker Compose, including environment variables and configuration",
+      "parent": "Deployment and Operations",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Kubernetes Deployment",
+      "purpose": "Guide for deploying to Kubernetes clusters, including ingress configuration and service manifests",
+      "parent": "Deployment and Operations",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Monitoring and Health Checks",
+      "purpose": "Explain the health check system, monitoring endpoints, and operational observability features",
+      "parent": "Deployment and Operations",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Security Best Practices",
+      "purpose": "Security guidelines for credential management, vulnerability reporting, and secure development",
+      "parent": "Deployment and Operations",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    }
+  ]
+}
