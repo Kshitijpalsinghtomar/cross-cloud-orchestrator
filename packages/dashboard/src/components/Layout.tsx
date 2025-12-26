@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Play, Activity, LogOut, Globe, Moon, Sun } from 'lucide-react';
+import { LayoutDashboard, Play, Activity, LogOut, Moon, Sun } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { clsx } from 'clsx';
 import { useTheme } from '../context/ThemeContext';
@@ -27,7 +27,7 @@ export default function Layout({ children }: LayoutProps) {
                 <div className="p-6">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-[var(--primary-600)] flex items-center justify-center text-white shadow-md shadow-[var(--primary-100)] dark:shadow-none">
-                            <Globe className="w-5 h-5" />
+                            <img src="/vite.svg" alt="Logo" className="w-5 h-5" />
                         </div>
                         <div>
                             <span className="font-bold text-lg tracking-tight text-[var(--text-main)] block leading-tight">
@@ -87,7 +87,7 @@ export default function Layout({ children }: LayoutProps) {
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-[var(--text-main)] truncate">Admin User</p>
-                            <p className="text-xs text-[var(--text-muted)] truncate">admin@cross-cloud.io</p>
+                            <p className="text-xs text-[var(--text-muted)] truncate">admin</p>
                         </div>
                         <LogOut className="w-4 h-4 text-[var(--text-muted)] hover:text-[var(--error-text)] transition-colors" />
                     </div>

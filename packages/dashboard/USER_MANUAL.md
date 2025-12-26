@@ -4,9 +4,9 @@
 
 ## 1. Accessing the Dashboard
 - **URL**: `http://localhost:5173`
-- **Default Credentials**:
-  - Email: `admin@cross-cloud.io`
-  - Password: `password`
+2. Login with the default credentials:
+   - **Username**: `admin`
+   - **Password**: `password`
 
 ## 2. System Health Monitor
 The **Home Page** displays the real-time status of your Cross-Cloud Architecture.

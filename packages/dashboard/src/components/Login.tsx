@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Globe, ArrowRight, Lock } from 'lucide-react';
+import { ArrowRight, Lock } from 'lucide-react';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function Login() {
                 {/* Header */}
                 <div className="bg-[var(--neutral-bg)] p-8 text-center border-b border-[var(--border-subtle)]">
                     <div className="w-12 h-12 bg-[var(--primary-600)] rounded-xl flex items-center justify-center text-white shadow-lg shadow-[var(--primary-100)] dark:shadow-none mx-auto mb-4">
-                        <Globe className="w-6 h-6" />
+                        <img src="/vite.svg" alt="Cross-Cloud Logo" className="w-8 h-8" />
                     </div>
                     <h1 className="text-xl font-bold text-[var(--text-main)] tracking-tight">Welcome back</h1>
                     <p className="text-sm text-[var(--text-muted)] mt-1">Sign in to Cross-Cloud Orchestrator</p>
@@ -30,12 +30,12 @@ export default function Login() {
                 <div className="p-8">
                     <form onSubmit={handleLogin} className="space-y-4">
                         <div>
-                            <label className="block text-xs font-semibold text-[var(--text-main)] uppercase tracking-wide mb-1.5">Email Address</label>
+                            <label className="block text-xs font-semibold text-[var(--text-main)] uppercase tracking-wide mb-1.5">Username</label>
                             <input
-                                type="email"
-                                defaultValue="admin@cross-cloud.io"
+                                type="text"
+                                defaultValue="admin"
                                 className="w-full bg-[var(--bg-app)] border border-[var(--border-main)] rounded-lg px-4 py-2.5 text-[var(--text-main)] text-sm focus:ring-2 focus:ring-[var(--primary-600)]/20 focus:border-[var(--primary-600)] outline-none transition-all placeholder-[var(--text-muted)]"
-                                placeholder="name@company.com"
+                                placeholder="admin"
                             />
                         </div>
                         <div>
