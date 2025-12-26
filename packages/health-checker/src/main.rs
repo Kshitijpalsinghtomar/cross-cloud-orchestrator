@@ -35,9 +35,9 @@ async fn check_service(name: &str, url: &str) -> HealthCheckResult {
 }
 
 async fn deep_health() -> impl Responder {
-    let analytics_url = std::env::var("ANALYTICS_URL").unwrap_or_else(|_| "http://analytics:8000/health".to_string());
-    let monitor_url = std::env::var("MONITOR_URL").unwrap_or_else(|_| "http://monitor:8080/health".to_string());
-    let api_url = std::env::var("API_URL").unwrap_or_else(|_| "http://api:3000/health".to_string());
+    let analytics_url = std::env::var("ANALYTICS_URL").unwrap_or_else(|_| "https://analytics:8000/health".to_string());
+    let monitor_url = std::env::var("MONITOR_URL").unwrap_or_else(|_| "https://monitor:8080/health".to_string());
+    let api_url = std::env::var("API_URL").unwrap_or_else(|_| "https://api:3000/health".to_string());
 
     let checks = vec![
         check_service("analytics-engine", &analytics_url).await,
