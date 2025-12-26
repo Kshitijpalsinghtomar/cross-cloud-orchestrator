@@ -2,7 +2,15 @@
 
 > **A resilient "Meta-Orchestrator" that manages workflows across AWS, GCP, and Azure with automatic failover.**
 
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![Go](https://img.shields.io/badge/Go-00ADD8?style=flat&logo=go&logoColor=white)](https://golang.org/)
+[![Rust](https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white)](https://www.rust-lang.org/)
+[![C#](https://img.shields.io/badge/C%23-239120?style=flat&logo=c-sharp&logoColor=white)](https://docs.microsoft.com/en-us/dotnet/csharp/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+
 ## 🤔 What is this?
+
 Imagine you have a critical business workflow (like processing a payment) running on **AWS Lambda**. If AWS has a region outage, your business stops. 
 
 This project is a **Control Plane** that sits *above* the clouds. It executes your workflows and acts as a "traffic controller":
@@ -16,44 +24,111 @@ This project is a **Control Plane** that sits *above* the clouds. It executes yo
 -   **🔌 Cloud Agnostic**: The core logic doesn't care about cloud specifics. It uses "Adapters" to talk to AWS, GCP, or Azure.
 -   **🧠 Smart State Management**: Tracks the progress of every workflow (Pending → Running → Completed).
 -   **🌐 REST API**: Submit and monitor workflows remotely via simple HTTP requests.
+-   **🌍 Polyglot Architecture**: 5 languages working together (TypeScript, Python, Go, Rust, C#).
 
-## 🏗️ Architecture (Hexagonal)
+---
 
-The project is built as a **TypeScript Monorepo**:
+## 🏗️ Architecture
 
--   **`packages/core`**: The brain. Contains the orchestration engine and state machine types. It has **zero** dependencies on specific clouds.
--   **`packages/adapters`**: The hands. Contains the actual code to talk to AWS SDK, Google Cloud SDK, etc.
--   **`packages/api`**: The interface. An Express.js server that lets you talk to the engine.
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     Cross-Cloud Orchestrator                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
+│  │  TypeScript  │  │    Python    │  │         Go           │   │
+│  │  API :3000   │──│ Analytics    │──│   Resource Monitor   │   │
+│  │  (Express)   │  │ :8000        │  │   :8080              │   │
+│  └──────────────┘  └──────────────┘  └──────────────────────┘   │
+│         │                                                        │
+│  ┌──────────────┐  ┌──────────────────────────────────────────┐ │
+│  │     Rust     │  │                   C#                      │ │
+│  │ Health Check │  │        Notification Service               │ │
+│  │ :8081        │  │        :8082                              │ │
+│  └──────────────┘  └──────────────────────────────────────────┘ │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Services Overview
+
+| Service | Language | Framework | Port | Description |
+|---------|----------|-----------|------|-------------|
+| **Orchestrator API** | TypeScript | Express.js | 3000 | Main gateway, workflow engine, routing |
+| **Analytics Engine** | Python | FastAPI | 8000 | Data processing, KPIs, metrics |
+| **Resource Monitor** | Go | net/http | 8080 | System health, CPU/Memory monitoring |
+| **Health Checker** | Rust | Actix-web | 8081 | Deep concurrent health analysis |
+| **Notification Service** | C# | .NET 8 | 8082 | Enterprise notifications (email/SMS) |
+
+---
 
 ## ⚡ Quick Start
 
-### 1. Installation
+### Prerequisites
+- Node.js 18+
+- Docker & Docker Compose
+- (Optional) Python 3.11+, Go 1.21+, for local development
+
+### 1. Clone & Install
 ```bash
-# Install all dependencies
+git clone https://github.com/Kshitijpalsinghtomar/cross-cloud-orchestrator.git
+cd cross-cloud-orchestrator
+
+# Install Node.js dependencies
 npm install
 
-# Build all packages
-npm run build -w packages/core
-npm run build -w packages/adapters
-npm run build -w packages/api
+# Build TypeScript
+npm run build
 ```
 
-### 2. Run the Demo (CLI)
-We have a built-in demo that simulates an AWS outage to prove the system works.
+### 2. Run with Docker (Recommended)
 ```bash
-node packages/core/dist/demo.js
-```
-**What you'll see:** 
-The system tries to invoke a function on "AWS". The mock adapter simulates a crash. The system catches it and successfully runs the function on "GCP" instead.
+# Build all services
+npm run docker:build
 
-### 3. Run the API Server
-Start the control plane server:
+# Start all services
+npm run docker:up
+
+# View logs
+npm run docker:logs
+
+# Stop services
+npm run docker:down
+```
+
+### 3. Run Locally (Development)
 ```bash
-npm start --workspace=packages/api
-```
-The server runs on `http://localhost:3000`.
+# Terminal 1: Start API
+npm run start:api
 
-**Submit a Workflow:**
+# Terminal 2: Start Python Analytics
+npm run start:analytics
+
+# Terminal 3: Start Go Monitor
+npm run start:monitor
+```
+
+---
+
+## 📡 API Endpoints
+
+### Core Orchestration
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/executions` | Submit a new workflow |
+| GET | `/executions` | List all executions |
+| GET | `/executions/:id` | Get execution status |
+| GET | `/health` | Basic health check |
+
+### Polyglot Integration
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/dashboard/summary` | Aggregated data from all services |
+| GET | `/system/health-deep` | Deep health analysis (Rust) |
+| POST | `/notifications/send` | Send notification (C#) |
+| POST | `/notifications/bulk` | Bulk notifications (C#) |
+
+### Example: Submit Workflow
 ```bash
 curl -X POST http://localhost:3000/executions \
   -H "Content-Type: application/json" \
@@ -72,20 +147,79 @@ curl -X POST http://localhost:3000/executions \
   }'
 ```
 
+### Example: Send Notification
+```bash
+curl -X POST http://localhost:3000/notifications/send \
+  -H "Content-Type: application/json" \
+  -d '{"to": "user@example.com", "message": "Hello from polyglot!"}'
+```
+
 ---
 
 ## 📂 Project Structure
 
 ```
+cross-cloud-orchestrator/
 ├── packages/
-│   ├── core/       # Workflow Engine & State Logic
-│   ├── adapters/   # AWS/GCP/Azure Implementations
-│   └── api/        # REST API Server
-├── package.json    # Root configuration
-└── README.md       # This file
+│   ├── api/              # TypeScript - Express API Server
+│   ├── core/             # TypeScript - Workflow Engine & State
+│   ├── adapters/         # TypeScript - AWS/GCP/Azure SDKs
+│   ├── database/         # TypeScript - Prisma ORM
+│   ├── dashboard/        # TypeScript - React Dashboard
+│   ├── worker/           # TypeScript - Background Worker
+│   ├── analytics-engine/ # Python - FastAPI Analytics
+│   ├── resource-monitor/ # Go - Health Monitoring
+│   ├── health-checker/   # Rust - Deep Health Analysis
+│   └── notification-service/ # C# - .NET Notifications
+├── docker-compose.yml    # Multi-service orchestration
+├── Dockerfile            # Main API container
+├── package.json          # Root configuration
+└── README.md             # This file
 ```
 
-## 🔮 Future Roadmap
--   [ ] **Redis Persistence**: Replace the current in-memory store with Redis for production durability.
--   [ ] **Real Cloud Keys**: Update `aws-adapter.ts` with real IAM credentials to control actual infrastructure.
--   [ ] **Dashboard UI**: A React frontend to visualize active workflows.
+---
+
+## 🛠️ Development
+
+### NPM Scripts
+```bash
+npm run build          # Build TypeScript
+npm run test           # Run tests
+npm run lint           # Lint code
+npm run start:api      # Start Node.js API
+npm run start:analytics # Start Python service
+npm run start:monitor  # Start Go service
+npm run docker:build   # Build Docker images
+npm run docker:up      # Start Docker stack
+npm run docker:down    # Stop Docker stack
+npm run docker:logs    # View Docker logs
+```
+
+### Adding New Services
+1. Create package in `packages/new-service/`
+2. Add Dockerfile
+3. Update `docker-compose.yml`
+4. Add environment variables to API service
+5. Create endpoint in `packages/api/src/server.ts`
+
+---
+
+## 🔮 Roadmap
+
+- [x] **Multi-Cloud Failover**: AWS → GCP automatic redirect
+- [x] **Polyglot Architecture**: 5 languages integrated
+- [x] **Docker Orchestration**: Full stack containerization
+- [ ] **Kubernetes Deployment**: Helm charts for K8s
+- [ ] **OpenTelemetry**: Distributed tracing
+- [ ] **Redis Persistence**: Replace in-memory store
+- [ ] **Dashboard UI**: React visualization
+
+---
+
+## 🤝 Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
