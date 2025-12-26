@@ -4,7 +4,7 @@
 
 > **A resilient "Meta-Orchestrator" that manages workflows across AWS, GCP, and Azure with automatic failover.**
 
-[![DeepWiki](https://deepwiki.com/static/badge.png)](https://deepwiki.com/Kshitijpalsinghtomar/cross-cloud-orchestrator)
+[![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Kshitijpalsinghtomar/cross-cloud-orchestrator)
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
