@@ -1,0 +1,124 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # 1. TypeScript / Node.js
+  test-typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  # 1.5. Dashboard (React)
+  test-dashboard:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/dashboard
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  # 1.6. CLI Tool
+  test-cli:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/cli
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  # 2. Python Analytics Engine
+  test-python:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/analytics-engine
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      # Basic smoke test: check if app can check configuration
+      - run: python -c "import main; print('Python Service Importable')"
+
+  # 3. Go Resource Monitor
+  test-go:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/resource-monitor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      - run: go build -v ./...
+      # - run: go test -v ./... (Uncomment when tests are added)
+
+  # 4. Rust Health Checker
+  test-rust:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/health-checker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - run: cargo check
+      - run: cargo test
+
+  # 5. C# Notification Service
+  test-csharp:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/notification-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet build
+      # - run: dotnet test (Uncomment when tests are added)
+
+  # 6. Docker Composition Build (Validation)
+  validate-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Docker Compose
+        run: docker-compose config
+      - name: Build Images
+        run: docker-compose build

@@ -1,8 +1,21 @@
 {
     "name": "@cc-orch/core",
     "version": "1.0.0",
+    "description": "The logic engine for Cross-Cloud Orchestrator. Import this to build custom serverless failover backends.",
+    "keywords": [
+        "orchestrator",
+        "serverless",
+        "failover",
+        "cross-cloud",
+        "aws",
+        "gcp"
+    ],
     "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "scripts": {
         "build": "tsc"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

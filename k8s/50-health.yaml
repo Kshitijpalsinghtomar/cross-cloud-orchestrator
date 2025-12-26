@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: health-checker
+  namespace: cc-orch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: health-checker
+  template:
+    metadata:
+      labels:
+        app: health-checker
+    spec:
+      containers:
+        - name: health-checker
+          image: ghcr.io/kshitijpalsinghtomar/cross-cloud-orchestrator/health-checker:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+          env:
+            - name: ANALYTICS_URL
+              value: "http://analytics:8000/health"
+            - name: MONITOR_URL
+              value: "http://monitor:8080/health"
+            - name: API_URL
+              value: "http://api:3000/health"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: health-checker
+  namespace: cc-orch
+spec:
+  selector:
+    app: health-checker
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081

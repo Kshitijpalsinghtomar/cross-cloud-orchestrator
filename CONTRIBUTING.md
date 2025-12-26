@@ -2,7 +2,32 @@
 
 Thank you for your interest in contributing! We welcome all contributions to make this orchestrator more robust and versatile.
 
+## 🌟 Project Philosophy
+
+-   **Reliability First**: We assume clouds *will* fail. Every feature must have a backup plan.
+-   **Accessible Complexity**: We hide the hard parts of distributed systems behind a simple API.
+-   **Polyglot Freedom**: We let developers write plugins in any language (Go, Rust, Python, C#, TS).
+
 ## 🚀 Getting Started
+
+### Option A: Quick Start (No Docker)
+If you just want to run the core engine logic (TypeScript) without the full microservices stack:
+
+1.  **Clone & Install**
+    ```bash
+    git clone https://github.com/Kshitijpalsinghtomar/cross-cloud-orchestrator.git
+    cd cross-cloud-orchestrator
+    npm install
+    npm run build
+    ```
+
+2.  **Run an Example**
+    ```bash
+    npm run example:failover
+    ```
+    *This simulates the cloud failover logic right in your terminal.*
+
+### Option B: Full Stack Development (Docker)
 
 1.  **Fork the repo** and clone it locally.
 2.  Install dependencies: `npm install`

@@ -31,9 +31,9 @@ export default function Layout({ children }: LayoutProps) {
                         </div>
                         <div>
                             <span className="font-bold text-lg tracking-tight text-[var(--text-main)] block leading-tight">
-                                Cortex<span className="text-[var(--primary-600)]">.io</span>
+                                Cross-Cloud<span className="text-[var(--primary-600)]">.Orch</span>
                             </span>
-                            <span className="text-[10px] text-[var(--text-muted)] font-medium tracking-wider uppercase">Orchestrator</span>
+                            <span className="text-[10px] text-[var(--text-muted)] font-medium tracking-wider uppercase">Beta v1.0</span>
                         </div>
                     </div>
                 </div>
@@ -87,7 +87,7 @@ export default function Layout({ children }: LayoutProps) {
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-[var(--text-main)] truncate">Admin User</p>
-                            <p className="text-xs text-[var(--text-muted)] truncate">admin@cortex.io</p>
+                            <p className="text-xs text-[var(--text-muted)] truncate">admin@cross-cloud.io</p>
                         </div>
                         <LogOut className="w-4 h-4 text-[var(--text-muted)] hover:text-[var(--error-text)] transition-colors" />
                     </div>

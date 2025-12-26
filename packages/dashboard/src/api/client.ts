@@ -39,6 +39,16 @@ export const api = {
         return res.data;
     },
 
+    async getDashboardSummary(): Promise<any> {
+        const res = await axios.get(`${API_BASE}/dashboard/summary`);
+        return res.data;
+    },
+
+    async getDeepHealth(): Promise<any> {
+        const res = await axios.get(`${API_BASE}/system/health-deep`);
+        return res.data;
+    },
+
     async listExecutions(): Promise<Execution[]> {
         const res = await axios.get(`${API_BASE}/executions`);
         return res.data;

@@ -1,6 +1,10 @@
 # 🌩️ Cross-Cloud Serverless Orchestrator
+![CI](https://github.com/Kshitijpalsinghtomar/cross-cloud-orchestrator/actions/workflows/ci.yml/badge.svg)
+
 
 > **A resilient "Meta-Orchestrator" that manages workflows across AWS, GCP, and Azure with automatic failover.**
+
+[![DeepWiki](https://deepwiki.com/static/badge.png)](https://deepwiki.com/Kshitijpalsinghtomar/cross-cloud-orchestrator)
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
@@ -8,6 +12,9 @@
 [![Rust](https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![C#](https://img.shields.io/badge/C%23-239120?style=flat&logo=c-sharp&logoColor=white)](https://docs.microsoft.com/en-us/dotnet/csharp/)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+
+## 📚 Documentation
+> **Explore the full documentation on [DeepWiki](https://deepwiki.com/Kshitijpalsinghtomar/cross-cloud-orchestrator)**
 
 ## 🤔 What is this?
 
@@ -21,6 +28,7 @@ This project is a **Control Plane** that sits *above* the clouds. It executes yo
 ## 🚀 Key Features
 
 -   **🛡️ Automatic Failover**: Define a `fallbackProvider` for any step. If the primary cloud fails, the backup takes over seamlessly.
+-   **⌨️  Developer CLI**: Interactive tool (`cc-orch`) to scaffold workflows and check system health with beautiful UI.
 -   **🔌 Cloud Agnostic**: The core logic doesn't care about cloud specifics. It uses "Adapters" to talk to AWS, GCP, or Azure.
 -   **🧠 Smart State Management**: Tracks the progress of every workflow (Pending → Running → Completed).
 -   **🌐 REST API**: Submit and monitor workflows remotely via simple HTTP requests.
@@ -30,24 +38,24 @@ This project is a **Control Plane** that sits *above* the clouds. It executes yo
 
 ## 🏗️ Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     Cross-Cloud Orchestrator                    │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
-│  │  TypeScript  │  │    Python    │  │         Go           │   │
-│  │  API :3000   │──│ Analytics    │──│   Resource Monitor   │   │
-│  │  (Express)   │  │ :8000        │  │   :8080              │   │
-│  └──────────────┘  └──────────────┘  └──────────────────────┘   │
-│         │                                                       │
-│  ┌──────────────┐  ┌──────────────────────────────────────────┐ │
-│  │     Rust     │  │                   C#                     │ │
-│  │ Health Check │  │        Notification Service              │ │
-│  │ :8081        │  │        :8082                             │ │
-│  └──────────────┘  └──────────────────────────────────────────┘ │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph "Cross-Cloud Switchboard"
+        API[API Server :3000] -->|Submit| Engine[Workflow Engine]
+        Engine -->|Execute| AWS[AWS Adapter]
+        Engine -->|Execute| GCP[GCP Adapter]
+        Engine -->|Execute| Azure[Azure Adapter]
+    end
+
+    subgraph "Polyglot Services"
+        Monitor[Resource Monitor (Go)] -->|Health/Metrics| API
+        Analytics[Analytics Engine (Python)] -->|Stats| API
+        Health[Health Checker (Rust)] -->|Deep Pings| API
+        Notify[Notification Service (C#)] -->|Alerts| API
+    end
+
+    AWS -.->|Failover| GCP
+    GCP -.->|Failover| Azure
 ```
 
 ### Services Overview

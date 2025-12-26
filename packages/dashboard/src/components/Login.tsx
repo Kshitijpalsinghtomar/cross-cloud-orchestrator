@@ -23,7 +23,7 @@ export default function Login() {
                         <Globe className="w-6 h-6" />
                     </div>
                     <h1 className="text-xl font-bold text-[var(--text-main)] tracking-tight">Welcome back</h1>
-                    <p className="text-sm text-[var(--text-muted)] mt-1">Sign in to Cortex Orchestratror</p>
+                    <p className="text-sm text-[var(--text-muted)] mt-1">Sign in to Cross-Cloud Orchestrator</p>
                 </div>
 
                 {/* Form */}
@@ -33,7 +33,7 @@ export default function Login() {
                             <label className="block text-xs font-semibold text-[var(--text-main)] uppercase tracking-wide mb-1.5">Email Address</label>
                             <input
                                 type="email"
-                                defaultValue="admin@cortex.io"
+                                defaultValue="admin@cross-cloud.io"
                                 className="w-full bg-[var(--bg-app)] border border-[var(--border-main)] rounded-lg px-4 py-2.5 text-[var(--text-main)] text-sm focus:ring-2 focus:ring-[var(--primary-600)]/20 focus:border-[var(--primary-600)] outline-none transition-all placeholder-[var(--text-muted)]"
                                 placeholder="name@company.com"
                             />

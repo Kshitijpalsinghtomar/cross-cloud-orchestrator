@@ -1,0 +1,30 @@
+{
+    "name": "@cc-orch/cli",
+    "version": "1.0.0",
+    "description": "Developer CLI for Cross-Cloud Orchestrator",
+    "main": "dist/index.js",
+    "bin": {
+        "cc-orch": "./dist/index.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "lint": "eslint . --ext .ts",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "axios": "^1.6.2",
+        "chalk": "^4.1.2",
+        "commander": "^11.1.0",
+        "figlet": "^1.7.0",
+        "inquirer": "^8.2.6",
+        "ora": "^5.4.1"
+    },
+    "devDependencies": {
+        "@types/figlet": "^1.5.8",
+        "@types/inquirer": "^9.0.7",
+        "@types/node": "^20.10.0",
+        "eslint": "^8.56.0",
+        "typescript": "^5.3.3"
+    }
+}
