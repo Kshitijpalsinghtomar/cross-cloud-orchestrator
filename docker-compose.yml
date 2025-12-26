@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - ANALYTICS_URL=http://analytics:8000
+      - MONITOR_URL=http://monitor:8080 # Monitor is background, but if we add API later
+    depends_on:
+      - analytics
+      - monitor
+
+  analytics:
+    build: ./packages/analytics-engine
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+
+  monitor:
+    build: ./packages/resource-monitor
+    # No ports exposed needed if it's just a background worker, 
+    # but strictly speaking we might want to expose metrics later.
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

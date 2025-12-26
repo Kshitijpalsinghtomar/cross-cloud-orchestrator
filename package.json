@@ -11,7 +11,11 @@
   "scripts": {
     "build": "tsc -b",
     "test": "jest",
-    "lint": "eslint . --ext .ts"
+    "build": "tsc -b",
+    "test": "jest",
+    "lint": "eslint . --ext .ts",
+    "start:analytics": "cd packages/analytics-engine && uvicorn main:app --reload",
+    "start:monitor": "cd packages/resource-monitor && go run main.go"
   },
   "devDependencies": {
     "typescript": "^5.3.3",

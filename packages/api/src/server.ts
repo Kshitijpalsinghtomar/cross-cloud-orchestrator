@@ -80,7 +80,41 @@ app.get('/executions/:id', async (req: Request, res: Response) => {
     }
 });
 
-// 3. Health Check
+// 4. Dashboard Aggregation Endpoint (Polyglot)
+app.get('/dashboard/summary', async (req: Request, res: Response) => {
+    try {
+        const analyticsUrl = process.env.ANALYTICS_URL || 'http://localhost:8999';
+        const monitorUrl = process.env.MONITOR_URL || 'http://localhost:8080';
+
+        const [analyticsRes, monitorRes] = await Promise.allSettled([
+            fetch(`${analyticsUrl}/analytics`),
+            fetch(`${monitorUrl}/health`)
+        ]);
+
+        let analyticsData = { error: "Service Unavailable" };
+        if (analyticsRes.status === 'fulfilled' && analyticsRes.value.ok) {
+            analyticsData = await analyticsRes.value.json();
+        }
+
+        let monitorData = { error: "Service Unavailable" };
+        if (monitorRes.status === 'fulfilled' && monitorRes.value.ok) {
+            monitorData = await monitorRes.value.json();
+        }
+
+        res.json({
+            title: "Cross-Cloud Orchestrator Dashboard",
+            services: {
+                orchestrator: { status: "Online", version: "1.0.0" },
+                analytics_engine: analyticsData,
+                resource_monitor: monitorData
+            },
+            timestamp: new Date().toISOString()
+        });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.get('/health', async (req, res) => {
     const providerChecks = await Promise.all(
         Array.from(adapters.values()).map(async (adapter) => {
