@@ -1,15 +1,14 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: polyglot-ingress
+  name: cross-cloud-ingress
   namespace: cc-orch
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-    - host: polyglot.cloud
-      http:
+    - http:
         paths:
           # Frontend
           - path: /

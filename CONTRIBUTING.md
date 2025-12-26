@@ -6,7 +6,7 @@ Thank you for your interest in contributing! We welcome all contributions to mak
 
 -   **Reliability First**: We assume clouds *will* fail. Every feature must have a backup plan.
 -   **Accessible Complexity**: We hide the hard parts of distributed systems behind a simple API.
--   **Polyglot Freedom**: We let developers write plugins in any language (Go, Rust, Python, C#, TS).
+-   **Cross-Cloud Integrity**: We let developers write plugins in any language (Go, Rust, Python, C#, TS).
 
 ## 🚀 Getting Started
 
@@ -35,7 +35,7 @@ If you just want to run the core engine logic (TypeScript) without the full micr
 
 ## 🏗️ Project Structure
 
-This project is a **Polyglot Monorepo** using 5 languages:
+This project is a **Multi-Language Monorepo** using 5 languages:
 
 | Package | Language | Purpose |
 |---------|----------|---------|

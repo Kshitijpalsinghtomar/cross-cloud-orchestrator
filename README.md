@@ -47,7 +47,7 @@ graph TD
         Engine -->|Execute| Azure["Azure Adapter"]
     end
 
-    subgraph "Polyglot Services"
+    subgraph "Infrastructure Services"
         Monitor["Resource Monitor (Go)"] -->|Health/Metrics| API
         Analytics["Analytics Engine (Python)"] -->|Stats| API
         Health["Health Checker (Rust)"] -->|Deep Pings| API
@@ -128,7 +128,7 @@ npm run start:monitor
 | GET | `/executions/:id` | Get execution status |
 | GET | `/health` | Basic health check |
 
-### Polyglot Integration
+### Cross-Cloud Integration
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/dashboard/summary` | Aggregated data from all services |
@@ -159,7 +159,7 @@ curl -X POST http://localhost:3000/executions \
 ```bash
 curl -X POST http://localhost:3000/notifications/send \
   -H "Content-Type: application/json" \
-  -d '{"to": "user@example.com", "message": "Hello from polyglot!"}'
+  -d '{"to": "user@example.com", "message": "Hello from Cross-Cloud!"}'
 ```
 
 ---

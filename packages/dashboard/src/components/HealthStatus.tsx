@@ -4,6 +4,17 @@ import { Activity, Globe, Server, Database } from 'lucide-react';
 
 const NodeStatus = ({ name, region, status, latency, details }: any) => {
     const isOnline = status === 'Online' || status === 'OK' || status === 'healthy';
+    const handleSimulateOutage = async () => {
+        try {
+            await api.toggleChaos(name.replace(' Cloud', ''), !details?.isOutage);
+            // Invalidate query to refresh status immediately
+            // queryClient.invalidateQueries(['health']); (Implementation dependent)
+            window.location.reload(); // Simple reload for prototype
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
     return (
         <div className="flex items-center justify-between p-4 bg-[var(--bg-app)] rounded-xl border border-[var(--border-subtle)]">
             <div className="flex items-center gap-4">
@@ -18,11 +29,21 @@ const NodeStatus = ({ name, region, status, latency, details }: any) => {
                     </div>
                 )}
             </div>
-            <div className="text-right">
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isOnline ? 'bg-[var(--success-bg)] text-[var(--success-text)]' : 'bg-[var(--error-bg)] text-[var(--error-text)]'}`}>
-                    {isOnline ? 'OPERATIONAL' : 'OUTAGE'}
-                </span>
-                {latency && <p className="text-[10px] text-[var(--text-muted)] font-mono mt-1">{latency}ms</p>}
+            <div className="text-right flex items-center gap-2">
+                {name.includes('Cloud') && (
+                    <button
+                        onClick={handleSimulateOutage}
+                        className="text-[10px] px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded border border-gray-300 transition-colors"
+                    >
+                        Simulate Outage
+                    </button>
+                )}
+                <div>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isOnline ? 'bg-[var(--success-bg)] text-[var(--success-text)]' : 'bg-[var(--error-bg)] text-[var(--error-text)]'}`}>
+                        {isOnline ? 'OPERATIONAL' : 'OUTAGE'}
+                    </span>
+                    {latency && <p className="text-[10px] text-[var(--text-muted)] font-mono mt-1">{latency}ms</p>}
+                </div>
             </div>
         </div>
     );
@@ -56,7 +77,7 @@ export default function HealthStatus() {
                     <Activity className="w-6 h-6" />
                 </div>
                 <div>
-                    <h2 className="text-xl font-bold text-[var(--text-main)]">Polyglot System Overview</h2>
+                    <h2 className="text-xl font-bold text-[var(--text-main)]">Cross-Cloud System Overview</h2>
                     <p className="text-[var(--text-muted)] text-sm">Real-time status of 5-language architecture.</p>
                 </div>
             </div>
@@ -70,7 +91,7 @@ export default function HealthStatus() {
 
                 {/* --- Polyglot Services --- */}
                 <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2 mt-6 pl-1 flex items-center gap-2">
-                    <Database className="w-3 h-3" /> Polyglot Services
+                    <Database className="w-3 h-3" /> Infrastructure Services
                 </h3>
 
                 {/* Python Analytics */}

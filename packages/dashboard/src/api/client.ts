@@ -62,5 +62,10 @@ export const api = {
     async submitWorkflow(workflow: unknown, input: unknown): Promise<{ executionId: string }> {
         const res = await axios.post(`${API_BASE}/executions`, { workflow, input });
         return res.data;
+    },
+
+    async toggleChaos(provider: string, isDown: boolean): Promise<any> {
+        const res = await axios.post(`${API_BASE}/admin/chaos`, { provider, isDown });
+        return res.data;
     }
 };

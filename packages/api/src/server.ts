@@ -175,6 +175,31 @@ app.post('/notifications/bulk', async (req: Request, res: Response) => {
     }
 });
 
+// 8. Chaos Control (Admin)
+app.post('/admin/chaos', async (req: Request, res: Response) => {
+    try {
+        const { provider, isDown } = req.body;
+        const adapter = adapters.get(provider);
+
+        if (!adapter) {
+            res.status(404).json({ error: `Provider ${provider} not found` });
+            return;
+        }
+
+        // We know it's a MockAdapter in this specific server setup
+        if (adapter instanceof MockAdapter) {
+            (adapter as any).setOutage(isDown);
+            res.json({ message: `Chaos Mode for ${provider}: ${isDown ? 'ACTIVATED' : 'DEACTIVATED'}` });
+        } else {
+            // In production with real adapters, we probably shouldn't allow this, or implement a different mechanism
+            res.status(400).json({ error: "Provider does not support Chaos Mode (Real Adapter)" });
+        }
+
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.get('/health', async (req, res) => {
     const providerChecks = await Promise.all(
         Array.from(adapters.values()).map(async (adapter) => {
