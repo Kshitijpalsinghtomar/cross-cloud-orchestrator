@@ -10,8 +10,8 @@ async function main() {
     // Initialize dependencies
     const store = new InMemoryStateStore();
     const adapters = new Map();
-    adapters.set('AWS', new MockAdapter('AWS'));
-    adapters.set('GCP', new MockAdapter('GCP'));
+    adapters.set('AWS', new MockAdapter());
+    adapters.set('GCP', new MockAdapter());
 
     const engine = new WorkflowEngine(store, adapters);
 
@@ -42,7 +42,7 @@ async function main() {
     const result = await store.getExecution(executionId);
 
     console.log("\n✅ Execution Complete:");
-    console.log(JSON.stringify(results, null, 2));
+    console.log(JSON.stringify(result, null, 2));
 }
 
 main().catch(console.error);
