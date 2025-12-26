@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { useContext, useEffect, useState } from 'react';
 import type { Theme } from './ThemeContextDefinition';
 import { ThemeContext } from './ThemeContextDefinition';
