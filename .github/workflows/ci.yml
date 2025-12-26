@@ -123,6 +123,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate Docker Compose
-        run: docker-compose config
+        run: docker compose config
       - name: Build Images
-        run: docker-compose build
+        run: docker compose build
