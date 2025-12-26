@@ -41,17 +41,17 @@ This project is a **Control Plane** that sits *above* the clouds. It executes yo
 ```mermaid
 graph TD
     subgraph "Cross-Cloud Switchboard"
-        API[API Server :3000] -->|Submit| Engine[Workflow Engine]
-        Engine -->|Execute| AWS[AWS Adapter]
-        Engine -->|Execute| GCP[GCP Adapter]
-        Engine -->|Execute| Azure[Azure Adapter]
+        API["API Server :3000"] -->|Submit| Engine["Workflow Engine"]
+        Engine -->|Execute| AWS["AWS Adapter"]
+        Engine -->|Execute| GCP["GCP Adapter"]
+        Engine -->|Execute| Azure["Azure Adapter"]
     end
 
     subgraph "Polyglot Services"
-        Monitor[Resource Monitor (Go)] -->|Health/Metrics| API
-        Analytics[Analytics Engine (Python)] -->|Stats| API
-        Health[Health Checker (Rust)] -->|Deep Pings| API
-        Notify[Notification Service (C#)] -->|Alerts| API
+        Monitor["Resource Monitor (Go)"] -->|Health/Metrics| API
+        Analytics["Analytics Engine (Python)"] -->|Stats| API
+        Health["Health Checker (Rust)"] -->|Deep Pings| API
+        Notify["Notification Service (C#)"] -->|Alerts| API
     end
 
     AWS -.->|Failover| GCP

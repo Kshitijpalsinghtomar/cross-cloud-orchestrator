@@ -12,7 +12,7 @@ const program = new Command();
 
 console.log(
     chalk.cyan(
-        figlet.textSync('CC-Orchestrator', { horizontalLayout: 'full' })
+        figlet.textSync('CC-ORCH', { horizontalLayout: 'default' })
     )
 );
 
