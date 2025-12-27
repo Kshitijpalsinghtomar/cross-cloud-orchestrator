@@ -3,19 +3,27 @@ import axios from 'axios';
 const API_BASE = '/api';
 
 export interface Execution {
-    executionId: string;
-    workflowId: string;
+    id: string; // WorkflowState.id
+    idempotencyKey?: string;
+    spec: {
+        id: string;
+        steps: Array<{
+            id: string;
+            dependencies?: string[];
+            primary?: string;
+        }>;
+    };
     status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
-    currentStepId?: string;
-    context: Record<string, unknown>;
-    history: {
-        timestamp: string;
-        type: string;
-        stepId?: string;
-        details?: unknown;
-    }[];
-    startedAt: string;
-    updatedAt: string;
+    stepStates: Record<string, {
+        stepId: string;
+        status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'SKIPPED';
+        attempts: number;
+        output?: any;
+        error?: any;
+    }>;
+    results?: Record<string, any>;
+    createdAt: number;
+    updatedAt: number;
 }
 
 export interface ProviderHealth {

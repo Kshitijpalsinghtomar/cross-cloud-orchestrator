@@ -70,26 +70,26 @@ export default function WorkflowList() {
                 <div className="divide-y divide-[var(--border-subtle)]">
                     {executions?.map((exec) => (
                         <div
-                            key={exec.executionId}
+                            key={exec.id}
                             className="p-5 hover:bg-[var(--bg-app)] transition-colors group flex items-center justify-between"
                         >
                             <div className="flex items-center gap-4">
                                 <StatusBadge status={exec.status} />
                                 <div>
                                     <div className="flex items-center gap-3 mb-1">
-                                        <span className="font-mono text-[var(--text-main)] font-semibold">{exec.executionId}</span>
+                                        <span className="font-mono text-[var(--text-main)] font-semibold">{exec.id}</span>
                                     </div>
                                     <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
-                                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(exec.startedAt).toLocaleTimeString()}</span>
+                                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(exec.createdAt).toLocaleTimeString()}</span>
                                         <span>•</span>
-                                        <span className="font-mono text-[10px] bg-[var(--neutral-bg)] px-1.5 py-0.5 rounded border border-[var(--border-subtle)]">{exec.workflowId}</span>
+                                        <span className="font-mono text-[10px] bg-[var(--neutral-bg)] px-1.5 py-0.5 rounded border border-[var(--border-subtle)]">{exec.spec.id}</span>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-6">
                                 <Link
-                                    to={`/execution/${exec.executionId}`}
+                                    to={`/execution/${exec.id}`}
                                     className="text-[var(--text-muted)] hover:text-[var(--primary-600)] transition-colors p-2 rounded-lg hover:bg-[var(--bg-app)]"
                                 >
                                     <ArrowRight className="w-5 h-5" />
