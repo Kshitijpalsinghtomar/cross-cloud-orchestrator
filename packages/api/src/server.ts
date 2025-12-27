@@ -4,7 +4,7 @@ import {
     WorkflowEngine,
     WorkflowSpec,
     CloudAdapter,
-    InMemoryStateStore
+    SqliteStateStore
 } from '@cc-orch/core';
 import { MockAdapter } from './mock-adapter';
 
@@ -17,7 +17,8 @@ app.use(cors());
 app.use(express.json());
 
 // --- Setup Orchestrator ---
-const stateStore = new InMemoryStateStore();
+// Use SqliteStateStore for persistence. Defaults to ./orchestrator.db
+const stateStore = new SqliteStateStore('./orchestrator.db');
 const adapters = new Map<string, CloudAdapter>();
 
 // Register Mocks for demo purposes
