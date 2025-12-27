@@ -1,26 +1,11 @@
 {
-    "compilerOptions": {
-        "target": "ES2022",
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
-        "sourceMap": true,
-        "declaration": true,
-        "composite": true,
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "rootDir": ".",
-        "outDir": "./dist"
-    },
-    "exclude": [
-        "node_modules",
-        "dist",
-        "packages/dashboard",
-        "examples",
-        "**/*.test.ts",
-        "packages/core/test-*.ts",
-        "packages/core/chaos-victim.ts",
-        "packages/api"
+    "files": [],
+    "references": [
+        {
+            "path": "./packages/core"
+        },
+        {
+            "path": "./packages/adapters/aws"
+        }
     ]
 }

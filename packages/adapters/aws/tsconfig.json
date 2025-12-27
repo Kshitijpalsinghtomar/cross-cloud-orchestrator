@@ -1,11 +1,20 @@
 {
-    "extends": "../../../tsconfig.json",
+    "extends": "../../../tsconfig.base.json",
     "compilerOptions": {
         "outDir": "./dist",
         "rootDir": "./src",
+        "composite": true,
         "isolatedModules": true
     },
+    "references": [
+        {
+            "path": "../../core"
+        }
+    ],
     "include": [
         "src/**/*"
+    ],
+    "exclude": [
+        "src/**/__tests__/*"
     ]
 }
