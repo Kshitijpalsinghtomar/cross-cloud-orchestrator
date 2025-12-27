@@ -38,6 +38,9 @@ adapters.set('GCP', gcpMock);
 const engine = new WorkflowEngine(stateStore);
 adapters.forEach((adapter, name) => engine.registerAdapter(name, adapter));
 
+// Start Recovery Process
+engine.recover().catch((err: any) => console.error("Failed to recover workflows:", err));
+
 // --- Routes ---
 
 // 1. Submit/Start Workflow
