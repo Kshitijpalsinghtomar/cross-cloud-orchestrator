@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { api } from '../api/client';
+import { useWorkflows } from '../hooks/useWorkflows';
+import StatusBadge from './StatusBadge';
 import { Link } from 'react-router-dom';
 import { Clock, Play, CheckCircle2, AlertCircle, ArrowRight, Activity, Search, Filter } from 'lucide-react';
 
@@ -18,12 +18,9 @@ function StatsCard({ title, value, icon: Icon, colorClass, bgClass }: any) {
 }
 
 export default function WorkflowList() {
-    const { data: executions, isLoading } = useQuery({
-        queryKey: ['executions'],
-        queryFn: api.listExecutions
-    });
+    const { data: executions, isLoading } = useWorkflows();
 
-    if (isLoading) return <div className="flex items-center justify-center h-64 text-[var(--text-muted)]">Loading Dashboard...</div>;
+    if (isLoading) return <div className="flex items-center justify-center h-64 text-[var(--text-muted)] animate-pulse">Loading Dashboard...</div>;
 
     const total = executions?.length || 0;
     const completed = executions?.filter(e => e.status === 'COMPLETED').length || 0;
@@ -77,15 +74,7 @@ export default function WorkflowList() {
                             className="p-5 hover:bg-[var(--bg-app)] transition-colors group flex items-center justify-between"
                         >
                             <div className="flex items-center gap-4">
-                                <div className={`p-2 rounded-full ${exec.status === 'COMPLETED' ? 'bg-[var(--success-bg)] text-[var(--success-text)]' :
-                                        exec.status === 'FAILED' ? 'bg-[var(--error-bg)] text-[var(--error-text)]' :
-                                            'bg-[var(--primary-50)] text-[var(--primary-600)]'
-                                    }`}>
-                                    {exec.status === 'COMPLETED' && <CheckCircle2 className="w-5 h-5" />}
-                                    {exec.status === 'FAILED' && <AlertCircle className="w-5 h-5" />}
-                                    {exec.status === 'PENDING' && <Clock className="w-5 h-5" />}
-                                    {exec.status === 'RUNNING' && <Activity className="w-5 h-5" />}
-                                </div>
+                                <StatusBadge status={exec.status} />
                                 <div>
                                     <div className="flex items-center gap-3 mb-1">
                                         <span className="font-mono text-[var(--text-main)] font-semibold">{exec.executionId}</span>
@@ -93,19 +82,12 @@ export default function WorkflowList() {
                                     <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
                                         <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(exec.startedAt).toLocaleTimeString()}</span>
                                         <span>•</span>
-                                        <span>Manua Trigger</span>
+                                        <span className="font-mono text-[10px] bg-[var(--neutral-bg)] px-1.5 py-0.5 rounded border border-[var(--border-subtle)]">{exec.workflowId}</span>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-6">
-                                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${exec.status === 'COMPLETED' ? 'bg-[var(--success-bg)] text-[var(--success-text)] border-[var(--success-bg)]' :
-                                        exec.status === 'FAILED' ? 'bg-[var(--error-bg)] text-[var(--error-text)] border-[var(--error-bg)]' :
-                                            'bg-[var(--primary-50)] text-[var(--primary-600)] border-[var(--primary-50)]'
-                                    }`}>
-                                    {exec.status}
-                                </span>
-
                                 <Link
                                     to={`/execution/${exec.executionId}`}
                                     className="text-[var(--text-muted)] hover:text-[var(--primary-600)] transition-colors p-2 rounded-lg hover:bg-[var(--bg-app)]"

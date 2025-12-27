@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { api } from '../api/client';
+import { useSubmitWorkflow } from '../hooks/useWorkflows';
 import { useNavigate } from 'react-router-dom';
 import { Play, Code2, Database, Loader2, Sparkles } from 'lucide-react';
 
@@ -27,20 +27,19 @@ export default function SubmitWorkflow() {
     const navigate = useNavigate();
     const [workflow, setWorkflow] = useState(JSON.stringify(DEFAULT_WORKFLOW, null, 2));
     const [input, setInput] = useState(JSON.stringify(DEFAULT_INPUT, null, 2));
-    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const mutation = useSubmitWorkflow();
+    const isSubmitting = mutation.isPending;
 
     const handleSubmit = async () => {
-        setIsSubmitting(true);
         try {
-            // Simulate "Compiling" delay for effect
-            await new Promise(r => setTimeout(r, 800));
-
-            const { executionId } = await api.submitWorkflow(JSON.parse(workflow), JSON.parse(input));
+            const { executionId } = await mutation.mutateAsync({
+                workflow: JSON.parse(workflow),
+                input: JSON.parse(input)
+            });
             navigate(`/execution/${executionId}`);
-        } catch (err) {
-            alert("Failed to submit: " + err);
-        } finally {
-            setIsSubmitting(false);
+        } catch (err: any) {
+            alert("Failed to submit: " + (err.response?.data?.error || err.message));
         }
     };
 

@@ -1,23 +1,15 @@
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '../api/client';
-import { ArrowLeft, CheckCircle2, AlertCircle, Clock, Server, Layers, Database } from 'lucide-react';
+import { useWorkflow } from '../hooks/useWorkflows';
+import StatusBadge from './StatusBadge';
+import { ArrowLeft, Clock, Server, Layers, Database } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 export default function WorkflowDetails() {
     const { id } = useParams<{ id: string }>();
-    const { data: execution, isLoading } = useQuery({
-        queryKey: ['execution', id],
-        queryFn: () => api.getExecution(id!),
-        enabled: !!id,
-        refetchInterval: (query) => {
-            const status = query.state.data?.status;
-            return (status === 'COMPLETED' || status === 'FAILED') ? false : 1000;
-        }
-    });
+    const { data: execution, isLoading } = useWorkflow(id!);
 
-    if (isLoading) return <div className="text-[var(--text-muted)] p-12 flex justify-center">Loading Details...</div>;
+    if (isLoading) return <div className="text-[var(--text-muted)] p-12 flex justify-center animate-pulse">Loading Details...</div>;
     if (!execution) return <div className="text-[var(--error-text)] p-12">Execution not found.</div>;
 
     return (
@@ -32,18 +24,7 @@ export default function WorkflowDetails() {
                         <h1 className="text-3xl font-bold text-[var(--text-main)] tracking-tight font-mono">{execution.executionId}</h1>
                     </div>
                     <div className="flex items-center gap-4 text-sm">
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1.5
-                    ${execution.status === 'COMPLETED'
-                                ? 'bg-[var(--success-bg)] border-[var(--success-bg)] text-[var(--success-text)]' :
-                                execution.status === 'FAILED'
-                                    ? 'bg-[var(--error-bg)] border-[var(--error-bg)] text-[var(--error-text)]' :
-                                    'bg-[var(--primary-50)] border-[var(--primary-50)] text-[var(--primary-600)]'
-                            }`}>
-                            {execution.status === 'COMPLETED' && <CheckCircle2 className="w-3.5 h-3.5" />}
-                            {execution.status === 'FAILED' && <AlertCircle className="w-3.5 h-3.5" />}
-                            {execution.status === 'PENDING' && <Clock className="w-3.5 h-3.5" />}
-                            {execution.status}
-                        </span>
+                        <StatusBadge status={execution.status} className="px-3 py-1" />
                         <span className="text-[var(--text-muted)]">•</span>
                         <span className="text-[var(--text-muted)] font-medium">Started {new Date(execution.startedAt).toLocaleString()}</span>
                     </div>

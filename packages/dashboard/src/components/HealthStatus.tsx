@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api/client';
 import { Activity, Globe, Server, Database } from 'lucide-react';
+import RegionMap from './RegionMap';
 
 const NodeStatus = ({ name, region, status, latency, details }: any) => {
     const isOnline = status === 'Online' || status === 'OK' || status === 'healthy';
@@ -15,10 +16,12 @@ const NodeStatus = ({ name, region, status, latency, details }: any) => {
         }
     };
 
+    const reliability = isOnline ? 100 : 0; // Mock reliability for now
+
     return (
         <div className="flex items-center justify-between p-4 bg-[var(--bg-app)] rounded-xl border border-[var(--border-subtle)]">
             <div className="flex items-center gap-4">
-                <div className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-[var(--success-text)]' : 'bg-[var(--error-text)]'}`} />
+                <div className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-[var(--success-text)]' : 'bg-[var(--error-text)]'} animate-pulse`} />
                 <div>
                     <h4 className="text-sm font-bold text-[var(--text-main)] w-32">{name}</h4>
                     <p className="text-xs text-[var(--text-muted)] flex items-center gap-1"><Globe className="w-3 h-3" /> {region}</p>
@@ -29,20 +32,35 @@ const NodeStatus = ({ name, region, status, latency, details }: any) => {
                     </div>
                 )}
             </div>
-            <div className="text-right flex items-center gap-2">
+            <div className="text-right flex items-center gap-4">
+                {name.includes('Cloud') && (
+                    <div className="hidden sm:block">
+                        <div className="flex items-center gap-2 mb-1 justify-end">
+                            <span className="text-[10px] uppercase font-bold text-[var(--text-muted)]">Reliability</span>
+                            <span className={`text-xs font-mono font-bold ${isOnline ? 'text-[var(--success-text)]' : 'text-[var(--error-text)]'}`}>{reliability}%</span>
+                        </div>
+                        <div className="w-24 h-1.5 bg-[var(--neutral-bg)] rounded-full overflow-hidden">
+                            <div
+                                className={`h-full rounded-full transition-all duration-500 ${isOnline ? 'bg-[var(--success-text)]' : 'bg-[var(--error-text)]'}`}
+                                style={{ width: `${reliability}%` }}
+                            />
+                        </div>
+                    </div>
+                )}
+
                 {name.includes('Cloud') && (
                     <button
                         onClick={handleSimulateOutage}
-                        className="text-[10px] px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded border border-gray-300 transition-colors"
+                        className="text-[10px] px-2 py-1 bg-[var(--bg-panel)] hover:bg-[var(--neutral-bg)] text-[var(--text-main)] rounded border border-[var(--border-main)] transition-colors"
                     >
                         Simulate Outage
                     </button>
                 )}
-                <div>
+                <div className="min-w-[80px]">
                     <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isOnline ? 'bg-[var(--success-bg)] text-[var(--success-text)]' : 'bg-[var(--error-bg)] text-[var(--error-text)]'}`}>
-                        {isOnline ? 'OPERATIONAL' : 'OUTAGE'}
+                        {isOnline ? 'ONLINE' : 'OUTAGE'}
                     </span>
-                    {latency && <p className="text-[10px] text-[var(--text-muted)] font-mono mt-1">{latency}ms</p>}
+                    {latency && <p className="text-[10px] text-[var(--text-muted)] font-mono mt-1 text-right">{latency}ms</p>}
                 </div>
             </div>
         </div>
@@ -126,6 +144,11 @@ export default function HealthStatus() {
                 <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2 mt-6 pl-1 flex items-center gap-2">
                     <Globe className="w-3 h-3" /> Cloud Providers
                 </h3>
+
+                <div className="mb-4">
+                    <RegionMap />
+                </div>
+
                 {healthData?.providers?.map((p: any) => (
                     <NodeStatus
                         key={p.provider}
