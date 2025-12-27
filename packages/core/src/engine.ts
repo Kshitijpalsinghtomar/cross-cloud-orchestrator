@@ -7,6 +7,7 @@ import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { SEMRESATTRS_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import { PolicyEngine, RoutingStrategy } from './policy.engine';
 
 // --- OTel Setup ---
 // --- OTel Setup ---
@@ -30,8 +31,9 @@ export interface WorkflowSpec {
 
 export interface WorkflowStep {
     id: string;
-    primary: string;
+    primary?: string; // Optional if strategy is set
     fallbacks?: string[];
+    strategy?: RoutingStrategy;
     payload: any;
 }
 
@@ -169,8 +171,11 @@ export class SqliteStateStore implements StateStore {
 
 export class WorkflowEngine {
     private adapters = new Map<string, CloudAdapter>();
+    private policyEngine: PolicyEngine;
 
-    constructor(private store: StateStore = new SqliteStateStore()) { }
+    constructor(private store: StateStore = new SqliteStateStore(), policyEngine?: PolicyEngine) {
+        this.policyEngine = policyEngine || new PolicyEngine();
+    }
 
     registerAdapter(name: string, adapter: CloudAdapter) {
         this.adapters.set(name, adapter);
@@ -251,51 +256,93 @@ export class WorkflowEngine {
                             'workflow.id': id
                         }
                     }, async (stepSpan) => {
-                        for (const provider of providers) {
-                            const adapter = this.adapters.get(provider);
-                            if (!adapter) {
-                                log(`Provider ${provider} not found!`);
-                                continue;
+
+                        // --- 1. Resolve Providers based on Policy & Strategy ---
+                        let candidateAdapters: CloudAdapter[] = [];
+
+                        if (step.strategy) {
+                            // Smart Routing: Use all available adapters filtered by policy
+                            candidateAdapters = this.policyEngine.filterProviders(this.adapters);
+                            candidateAdapters = this.policyEngine.sortProviders(candidateAdapters, step.strategy);
+                            log(`Smart Routing (${step.strategy.type}): Found ${candidateAdapters.length} candidates.`);
+                        } else {
+                            // Explicit Definition: Use primary + fallbacks
+                            const names = [step.primary!, ...(step.fallbacks || [])].filter(Boolean);
+                            // Still check policies! logic: map name -> adapter -> check policy
+                            for (const name of names) {
+                                const adapter = this.adapters.get(name);
+                                if (adapter) {
+                                    // Verify against "DENY" policies at least?
+                                    // For now, let's treat explicit as "user knows best" BUT
+                                    // strict compliance policies (DENY) should probably still apply?
+                                    // Let's apply filterProviders to the explicit list to be safe.
+                                    const filtered = this.policyEngine.filterProviders(new Map([[name, adapter]]));
+                                    if (filtered.length > 0) {
+                                        candidateAdapters.push(adapter);
+                                    } else {
+                                        log(`Provider ${name} blocked by policy.`);
+                                    }
+                                } else {
+                                    log(`Provider ${name} not found!`);
+                                }
+                            }
+                        }
+
+                        if (candidateAdapters.length === 0) {
+                            log(`No valid providers found for step ${step.id} (Check policies or config)`);
+                            stepSpan.setAttribute('error', true);
+                            stepSpan.recordException(new Error('No valid providers'));
+                            // This will fall through to 'stepSuccess = false'
+                        }
+
+                        // --- 2. Try Execution ---
+                        for (const adapter of candidateAdapters) {
+                            // We need to find the "name" of the adapter for logging history.
+                            // In a real system adapter might have a .name property.
+                            // Or we search the map. Efficient enough?
+                            let providerName = 'unknown';
+                            for (const [key, val] of this.adapters.entries()) {
+                                if (val === adapter) { providerName = key; break; }
                             }
 
                             try {
-                                log(`Executing step ${step.id} on ${provider}...`);
-                                stepSpan.addEvent('attempt_execution', { provider });
+                                log(`Executing step ${step.id} on ${providerName}...`);
+                                stepSpan.addEvent('attempt_execution', { provider: providerName });
 
                                 const result = await adapter.executeStep(step.id, step.payload);
 
                                 if (!result.success) {
                                     const errorType = result.errorType || 'NON_RETRYABLE';
-                                    log(`Step ${step.id} failed on ${provider} [${errorType}]: ${result.errorCode}`);
+                                    log(`Step ${step.id} failed on ${providerName} [${errorType}]: ${result.errorCode}`);
                                     stepSpan.setAttribute('error', true);
                                     stepSpan.setAttribute('error.type', errorType);
                                     stepSpan.recordException(new Error(result.errorCode || 'Unknown Error'));
 
-                                    this.recordHistory(wf, step.id, provider, false, result.errorCode || result.details);
+                                    this.recordHistory(wf, step.id, providerName, false, result.errorCode || result.details);
                                     await this.store.save(wf);
 
                                     if (errorType === 'RETRYABLE') {
-                                        log(`  -> Retrying ${provider} (NOT IMPLEMENTED YET, SKIPPING TO FALLBACK FOR V1)...`);
+                                        log(`  -> Retrying ${providerName} (NOT IMPLEMENTED YET, SKIPPING TO FALLBACK FOR V1)...`);
                                         continue;
                                     } else if (errorType === 'AUTH_ERROR') {
-                                        log(`  -> Critical Auth Error on ${provider}. Failing workflow.`);
+                                        log(`  -> Critical Auth Error on ${providerName}. Failing workflow.`);
                                         wf.status = 'FAILED';
-                                        throw new Error(`Critical Auth Error on ${provider}`);
+                                        throw new Error(`Critical Auth Error on ${providerName}`);
                                     } else {
                                         // PROVIDER_DOWN, NON_RETRYABLE, TIMEOUT -> Try next fallback
                                         continue;
                                     }
                                 }
 
-                                log(`Step ${step.id} succeeded on ${provider}`);
-                                this.recordHistory(wf, step.id, provider, true, undefined, result.id);
+                                log(`Step ${step.id} succeeded on ${providerName}`);
+                                this.recordHistory(wf, step.id, providerName, true, undefined, result.id);
                                 if (!wf.results) wf.results = {};
                                 wf.results![step.id] = result.output; // Store step output
                                 stepSuccess = true;
                                 break;
 
                             } catch (e: any) {
-                                log(`Internal error execution step on ${provider}: ${e.message}`);
+                                log(`Internal error execution step on ${providerName}: ${e.message}`);
                                 stepSpan.recordException(e);
                                 if (e.message?.includes('Critical Auth Error')) throw e;
                             }

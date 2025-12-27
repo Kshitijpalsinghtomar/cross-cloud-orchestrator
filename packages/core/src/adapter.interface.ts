@@ -34,4 +34,14 @@ export interface CloudAdapter {
      * Health check for adapter's connectivity/auth
      */
     health(): Promise<{ ok: boolean; latencyMs?: number }>;
+
+    /**
+     * Static metadata about this provider adapter.
+     */
+    providerInfo?: {
+        region: string;
+        tier: 'STANDARD' | 'PREMIUM' | 'SPOT';
+        costPerMs?: number; // Normalized cost factor
+        complianceTags?: string[]; // e.g., ["EU", "GDPR", "HIPAA"]
+    };
 }
