@@ -1,20 +1,17 @@
 import axios from 'axios';
-import { WorkflowDefinition } from '@cc-orch/core';
+import { WorkflowSpec } from '@cc-orch/core';
 
 async function testApi() {
     const API_URL = 'http://localhost:3000';
 
     // 1. Define Workflow
-    const workflow: WorkflowDefinition = {
+    const workflow: WorkflowSpec = {
         id: 'api-test-workflow',
-        name: 'API Test',
-        startAt: 'step-1',
         steps: [
             {
                 id: 'step-1',
-                type: 'TASK',
-                functionId: 'my-func', // Defined in server.ts
-                provider: 'AWS'
+                payload: { input: "test" }, // payload is required
+                primary: 'AWS'
             }
         ]
     };

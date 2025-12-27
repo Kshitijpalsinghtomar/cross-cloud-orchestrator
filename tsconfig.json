@@ -6,6 +6,12 @@
         },
         {
             "path": "./packages/adapters/aws"
+        },
+        {
+            "path": "./packages/api"
+        },
+        {
+            "path": "./packages/dashboard"
         }
     ]
 }

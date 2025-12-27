@@ -1,4 +1,4 @@
-import { CloudAdapter, ExecutionResult } from '@cross-cloud/core/dist/adapter.interface';
+import { CloudAdapter, ExecutionResult } from '@cc-orch/core';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 
 export class AwsLambdaAdapter implements CloudAdapter {

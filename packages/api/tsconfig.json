@@ -6,9 +6,15 @@
         "composite": true
     },
     "references": [
-        { "path": "../core" },
-        { "path": "../database" },
-        { "path": "../adapters" }
+        {
+            "path": "../core"
+        },
+        {
+            "path": "../database"
+        },
+        {
+            "path": "../adapters/aws"
+        }
     ],
     "include": [
         "src/**/*"

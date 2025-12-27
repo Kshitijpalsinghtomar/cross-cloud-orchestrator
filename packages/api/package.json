@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "dist/index.js",
     "dependencies": {
-        "@cc-orch/adapters": "^1.0.0",
+        "@cc-orch/adapter-aws": "^1.0.0",
         "@cc-orch/core": "*",
         "@cc-orch/database": "^1.0.0",
         "@types/cors": "^2.8.19",

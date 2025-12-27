@@ -2,20 +2,21 @@ import { v4 as uuidv4 } from 'uuid';
 import { CloudAdapter, ExecutionResult } from './adapter.interface';
 import * as sqlite3 from 'sqlite3';
 import { trace, context, trace as apiTrace, SpanStatusCode } from '@opentelemetry/api';
-// Use require to avoid TS import issues with OTel
-const { NodeTracerProvider } = require('@opentelemetry/sdk-trace-node');
-const { ConsoleSpanExporter, SimpleSpanProcessor } = require('@opentelemetry/sdk-trace-base');
-const { Resource } = require('@opentelemetry/resources');
+// Use import to ensure correct module resolution
+import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import { SEMRESATTRS_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
 // --- OTel Setup ---
-const provider = new NodeTracerProvider({
-    resource: new Resource({
-        [SEMRESATTRS_SERVICE_NAME]: 'cross-cloud-core',
-    }),
-});
-provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
-provider.register();
+// --- OTel Setup ---
+// const provider = new NodeTracerProvider({
+//     resource: resourceFromAttributes({
+//         [SEMRESATTRS_SERVICE_NAME]: 'cross-cloud-core',
+//     }),
+// });
+// (provider as any).addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
+// provider.register();
 
 const tracer = trace.getTracer('cross-cloud-core');
 import { promisify } from 'util';
@@ -57,6 +58,7 @@ export interface StateStore {
     save(wf: WorkflowState): Promise<void>;
     get(id: string): Promise<WorkflowState | undefined>;
     getByIdempotencyKey(key: string): Promise<WorkflowState | undefined>;
+    list(): Promise<WorkflowState[]>;
 }
 
 export class InMemoryStateStore implements StateStore {
@@ -76,6 +78,9 @@ export class InMemoryStateStore implements StateStore {
     async getByIdempotencyKey(key: string): Promise<WorkflowState | undefined> {
         const id = this.idempotencyIndex.get(key);
         return id ? this.get(id) : undefined;
+    }
+    async list(): Promise<WorkflowState[]> {
+        return Array.from(this.store.values());
     }
 }
 
@@ -135,6 +140,16 @@ export class SqliteStateStore implements StateStore {
             this.db.get(`SELECT state_json FROM workflows WHERE idempotency_key = ?`, [key], (err, row: any) => {
                 if (err) reject(err);
                 else resolve(row ? JSON.parse(row.state_json) : undefined);
+            });
+        });
+    }
+
+    async list(): Promise<WorkflowState[]> {
+        await this.initPromise;
+        return new Promise((resolve, reject) => {
+            this.db.all(`SELECT state_json FROM workflows`, (err, rows: any[]) => {
+                if (err) reject(err);
+                else resolve(rows.map(row => JSON.parse(row.state_json)));
             });
         });
     }

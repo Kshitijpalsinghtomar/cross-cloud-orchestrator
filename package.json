@@ -13,7 +13,7 @@
     "build": "tsc -b",
     "test": "jest",
     "lint": "eslint . --ext .ts",
-    "start:api": "node dist/packages/api/src/server.js",
+    "start:api": "node packages/api/dist/server.js",
     "start:analytics": "cd packages/analytics-engine && uvicorn main:app --reload --port 8999",
     "start:monitor": "cd packages/resource-monitor && go run main.go",
     "docker:build": "docker compose build",

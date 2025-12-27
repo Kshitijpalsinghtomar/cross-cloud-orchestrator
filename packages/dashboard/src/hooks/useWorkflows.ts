@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api, Execution } from '../api/client';
+import { api } from '../api/client';
 
 export const useWorkflows = () => {
     return useQuery({

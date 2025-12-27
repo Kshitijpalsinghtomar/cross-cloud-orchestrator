@@ -2,12 +2,13 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import {
     WorkflowEngine,
-    WorkflowDefinition,
-    CloudFunctionAdapter
+    WorkflowSpec,
+    CloudAdapter,
+    InMemoryStateStore
 } from '@cc-orch/core';
-import { MockAdapter } from '@cc-orch/adapters';
+import { MockAdapter } from './mock-adapter';
 
-import { PrismaStateStore } from './store/prisma-store';
+// import { PrismaStateStore } from './store/prisma-store';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -16,24 +17,25 @@ app.use(cors());
 app.use(express.json());
 
 // --- Setup Orchestrator ---
-const stateStore = new PrismaStateStore();
-const adapters = new Map<string, CloudFunctionAdapter>();
+const stateStore = new InMemoryStateStore();
+const adapters = new Map<string, CloudAdapter>();
 
 // Register Mocks for demo purposes
 const awsMock = new MockAdapter();
 awsMock.providerName = 'AWS'; // Hack to set correct name
-awsMock.registerFunction('my-func', (input) => ({ msg: "Hello from AWS", input }));
+awsMock.registerFunction('my-func', (input: any) => ({ msg: "Hello from AWS", input }));
 // Simulate AWS failure for specific function ID
 awsMock.registerFunction('flakey-func', () => { throw new Error("AWS Down"); });
 
 const gcpMock = new MockAdapter();
 gcpMock.providerName = 'GCP';
-gcpMock.registerFunction('flakey-func', (input) => ({ msg: "Saved by GCP", input }));
+gcpMock.registerFunction('flakey-func', (input: any) => ({ msg: "Saved by GCP", input }));
 
 adapters.set('AWS', awsMock);
 adapters.set('GCP', gcpMock);
 
-const engine = new WorkflowEngine(stateStore, adapters);
+const engine = new WorkflowEngine(stateStore);
+adapters.forEach((adapter, name) => engine.registerAdapter(name, adapter));
 
 // --- Routes ---
 
@@ -47,7 +49,7 @@ app.post('/executions', async (req: Request, res: Response) => {
             return;
         }
 
-        const executionId = await engine.startWorkflow(workflow as WorkflowDefinition, input || {});
+        const executionId = await engine.submitWorkflow(workflow as WorkflowSpec, workflow.id); // Assuming submitWorkflow(spec, idempotencyKey)
         res.status(201).json({ executionId, status: "PENDING" });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
@@ -59,7 +61,7 @@ app.post('/executions', async (req: Request, res: Response) => {
 // 2. List Executions
 app.get('/executions', async (req: Request, res: Response) => {
     try {
-        const executions = await stateStore.listExecutions();
+        const executions = await stateStore.list();
         res.json(executions);
     } catch (error: any) {
         res.status(500).json({ error: error.message });
@@ -69,7 +71,7 @@ app.get('/executions', async (req: Request, res: Response) => {
 // 3. Get Execution Status
 app.get('/executions/:id', async (req: Request, res: Response) => {
     try {
-        const execution = await stateStore.getExecution(req.params.id);
+        const execution = await stateStore.get(req.params.id);
         if (!execution) {
             res.status(404).json({ error: "Execution not found" });
             return;
@@ -202,10 +204,11 @@ app.post('/admin/chaos', async (req: Request, res: Response) => {
 
 app.get('/health', async (req, res) => {
     const providerChecks = await Promise.all(
-        Array.from(adapters.values()).map(async (adapter) => {
-            const health = await adapter.checkHealth();
+        Array.from(adapters.entries()).map(async ([name, adapter]) => {
+            const health = await adapter.health();
             return {
-                provider: adapter.providerName,
+                provider: name,
+                status: health.ok ? 'Online' : 'Offline',
                 ...health
             };
         })

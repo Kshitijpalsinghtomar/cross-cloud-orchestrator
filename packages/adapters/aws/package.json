@@ -1,5 +1,5 @@
 {
-    "name": "@cross-cloud/adapter-aws",
+    "name": "@cc-orch/adapter-aws",
     "version": "1.0.0",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -9,7 +9,7 @@
     },
     "dependencies": {
         "@aws-sdk/client-lambda": "^3.0.0",
-        "@cross-cloud/core": "^1.0.0"
+        "@cc-orch/core": "^1.0.0"
     },
     "devDependencies": {
         "typescript": "^5.0.0",

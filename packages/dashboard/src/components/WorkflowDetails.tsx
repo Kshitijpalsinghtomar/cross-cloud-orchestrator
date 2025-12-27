@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useWorkflow } from '../hooks/useWorkflows';
 import StatusBadge from './StatusBadge';
-import { ArrowLeft, Clock, Server, Layers, Database } from 'lucide-react';
+import { ArrowLeft, Server, Layers, Database } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
