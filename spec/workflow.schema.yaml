@@ -1,0 +1,31 @@
+type: object
+required:
+  - id
+  - steps
+properties:
+  id:
+    type: string
+    description: Unique identifier for the workflow
+  steps:
+    type: array
+    items:
+      type: object
+      required:
+        - id
+        - primary
+        - payload
+      properties:
+        id:
+          type: string
+          description: Unique step identifier
+        primary:
+          type: string
+          description: Name of the primary provider (e.g., aws-lambda)
+        fallbacks:
+          type: array
+          items:
+            type: string
+          description: List of fallback providers in order
+        payload:
+          type: object
+          description: Arbitrary payload passed to the provider adapter

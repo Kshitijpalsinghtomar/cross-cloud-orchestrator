@@ -113,6 +113,7 @@ dist/
 output.txt
 api-test-output.txt
 server-log.txt
+*.log
 
 # ==================
 # Polyglot Languages

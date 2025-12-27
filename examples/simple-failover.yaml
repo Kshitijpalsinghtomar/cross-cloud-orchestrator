@@ -1,0 +1,10 @@
+id: payment-failover-demo
+steps:
+  - id: process-payment
+    primary: aws-lambda-payment
+    fallbacks: 
+      - gcp-function-payment
+    payload:
+      amount: 100
+      currency: USD
+      customer: user_123

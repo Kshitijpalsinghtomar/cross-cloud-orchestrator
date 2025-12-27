@@ -14,8 +14,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./types"), exports);
-__exportStar(require("./state-store"), exports);
-__exportStar(require("./interfaces"), exports);
-__exportStar(require("./workflow-engine"), exports);
+__exportStar(require("./engine"), exports);
+// Exporting the adapter interface from the spec if needed, or consumers import directly
+// export * from '../../../spec/adapter.interface'; 
 //# sourceMappingURL=index.js.map

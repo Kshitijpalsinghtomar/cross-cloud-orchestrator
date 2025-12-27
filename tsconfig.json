@@ -16,6 +16,11 @@
     "exclude": [
         "node_modules",
         "dist",
-        "packages/dashboard"
+        "packages/dashboard",
+        "examples",
+        "**/*.test.ts",
+        "packages/core/test-*.ts",
+        "packages/core/chaos-victim.ts",
+        "packages/api"
     ]
 }
