@@ -114,6 +114,7 @@ output.txt
 api-test-output.txt
 server-log.txt
 *.log
+*.db
 
 # ==================
 # Polyglot Languages

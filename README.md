@@ -217,9 +217,10 @@ npm run docker:logs    # View Docker logs
 - [x] **Multi-Cloud Failover**: AWS → GCP automatic redirect
 - [x] **Polyglot Architecture**: 5 languages integrated
 - [x] **Docker Orchestration**: Full stack containerization
+- [x] **OpenTelemetry**: Distributed tracing with OTel SDK
+- [x] **Durable Persistence**: SQLite-based state management
+- [x] **Performance Limits**: Documented in [LIMITS.md](spec/LIMITS.md)
 - [ ] **Kubernetes Deployment**: Helm charts for K8s
-- [ ] **OpenTelemetry**: Distributed tracing
-- [ ] **Redis Persistence**: Replace in-memory store
 - [ ] **Dashboard UI**: React visualization
 
 ---
