@@ -41,6 +41,15 @@ export interface HealthStatus {
     providers: ProviderHealth[];
 }
 
+export interface WorkflowDefinition {
+    id: string;
+    name: string;
+    description?: string;
+    definition: any; // WorkflowSpec
+    createdAt: number;
+    updatedAt: number;
+}
+
 export const api = {
     async getHealth(): Promise<HealthStatus> {
         const res = await axios.get(`${API_BASE}/health`);
@@ -57,8 +66,8 @@ export const api = {
         return res.data;
     },
 
-    async listExecutions(): Promise<Execution[]> {
-        const res = await axios.get(`${API_BASE}/executions`);
+    async listExecutions(params?: { limit?: number; offset?: number }): Promise<{ items: Execution[]; total: number }> {
+        const res = await axios.get(`${API_BASE}/executions`, { params });
         return res.data;
     },
 
@@ -75,5 +84,26 @@ export const api = {
     async toggleChaos(provider: string, isDown: boolean): Promise<any> {
         const res = await axios.post(`${API_BASE}/admin/chaos`, { provider, isDown });
         return res.data;
+    },
+
+    // --- Definitions ---
+
+    async listDefinitions(): Promise<WorkflowDefinition[]> {
+        const res = await axios.get(`${API_BASE}/definitions`);
+        return res.data;
+    },
+
+    async getDefinition(id: string): Promise<WorkflowDefinition> {
+        const res = await axios.get(`${API_BASE}/definitions/${id}`);
+        return res.data;
+    },
+
+    async saveDefinition(def: Partial<WorkflowDefinition>): Promise<WorkflowDefinition> {
+        const res = await axios.post(`${API_BASE}/definitions`, def);
+        return res.data;
+    },
+
+    async deleteDefinition(id: string): Promise<void> {
+        await axios.delete(`${API_BASE}/definitions/${id}`);
     }
 };

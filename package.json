@@ -11,7 +11,9 @@
     "start:api": "node packages/api/dist/server.js",
     "dev": "npm run dev --workspaces",
     "dev:api": "npm start --workspace=@cc-orch/api",
-    "dev:dashboard": "npm run dev --workspace=@cc-orch/dashboard"
+    "dev:dashboard": "npm run dev --workspace=@cc-orch/dashboard",
+    "dev:monitor": "npm run start:monitor",
+    "start:monitor": "echo 'Starting Monitor (Simulated)...' && node -e \"setInterval(() => {}, 1000)\""
   },
   "devDependencies": {
     "typescript": "^5.3.3"

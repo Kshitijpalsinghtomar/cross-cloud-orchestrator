@@ -4,7 +4,7 @@ import { api } from '../api/client';
 export const useWorkflows = () => {
     return useQuery({
         queryKey: ['workflows'],
-        queryFn: api.listExecutions,
+        queryFn: () => api.listExecutions({ limit: 50, offset: 0 }).then(res => res.items),
         refetchInterval: 2000, // Poll every 2 seconds for live updates
     });
 };
@@ -28,6 +28,42 @@ export const useSubmitWorkflow = () => {
             api.submitWorkflow(workflow, input),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['workflows'] });
+        },
+    });
+};
+// --- Definitions ---
+
+export const useDefinitions = () => {
+    return useQuery({
+        queryKey: ['definitions'],
+        queryFn: () => api.listDefinitions(),
+    });
+};
+
+export const useDefinition = (id: string | null) => {
+    return useQuery({
+        queryKey: ['definition', id],
+        queryFn: () => api.getDefinition(id!),
+        enabled: !!id,
+    });
+};
+
+export const useSaveDefinition = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (def: any) => api.saveDefinition(def),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['definitions'] });
+        },
+    });
+};
+
+export const useDeleteDefinition = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id: string) => api.deleteDefinition(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['definitions'] });
         },
     });
 };

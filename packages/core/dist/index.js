@@ -14,7 +14,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SqliteDefinitionStore = void 0;
 __exportStar(require("./engine"), exports);
+__exportStar(require("./engine"), exports);
+var engine_1 = require("./engine");
+Object.defineProperty(exports, "SqliteDefinitionStore", { enumerable: true, get: function () { return engine_1.SqliteDefinitionStore; } });
 // Exporting the adapter interface from the spec if needed, or consumers import directly
 // export * from '../../../spec/adapter.interface'; 
 //# sourceMappingURL=index.js.map

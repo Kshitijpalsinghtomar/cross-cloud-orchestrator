@@ -5,6 +5,7 @@ import WorkflowList from './components/WorkflowList';
 import WorkflowDetails from './components/WorkflowDetails';
 import SubmitWorkflow from './components/SubmitWorkflow';
 import HealthStatus from './components/HealthStatus';
+import GlobalNetwork from './components/GlobalNetwork';
 
 import Login from './components/Login';
 import { ThemeProvider } from './context/ThemeContext';
@@ -24,7 +25,8 @@ function App() {
                   <Route path="/" element={<WorkflowList />} />
                   <Route path="/execution/:id" element={<WorkflowDetails />} />
                   <Route path="/submit" element={<SubmitWorkflow />} />
-                  <Route path="/health" element={<div className="p-8 max-w-2xl"><h1 className="text-3xl font-bold mb-8 text-[var(--text-main)]">System Health</h1><HealthStatus /></div>} />
+                  <Route path="/health" element={<HealthStatus />} />
+                  <Route path="/network" element={<GlobalNetwork />} />
                 </Routes>
               </Layout>
             } />

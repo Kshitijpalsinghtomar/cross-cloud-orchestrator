@@ -57,6 +57,15 @@ export interface WorkflowState {
     updatedAt: number;
 }
 
+export interface WorkflowDefinition {
+    id: string;
+    name: string;
+    description?: string;
+    definition: WorkflowSpec;
+    createdAt: number;
+    updatedAt: number;
+}
+
 // --- Persistence ---
 
 export interface StateStore {
@@ -178,6 +187,116 @@ export class SqliteStateStore implements StateStore {
             this.db.all(sql, params, (err, rows: any[]) => {
                 if (err) reject(err);
                 else resolve(rows.map(row => JSON.parse(row.state_json)));
+            });
+        });
+    }
+}
+
+// --- Definition Store ---
+
+export interface DefinitionStore {
+    save(def: WorkflowDefinition): Promise<void>;
+    get(id: string): Promise<WorkflowDefinition | undefined>;
+    list(): Promise<WorkflowDefinition[]>;
+    delete(id: string): Promise<void>;
+}
+
+export class SqliteDefinitionStore implements DefinitionStore {
+    private db: sqlite3.Database;
+    private initPromise: Promise<void>;
+
+    constructor(dbPath: string = './orchestrator.db') {
+        this.db = new sqlite3.Database(dbPath);
+        this.initPromise = this.init();
+    }
+
+    private init(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.db.run(`
+                CREATE TABLE IF NOT EXISTS workflow_definitions (
+                    id TEXT PRIMARY KEY,
+                    name TEXT,
+                    description TEXT,
+                    definition_json TEXT,
+                    created_at INTEGER,
+                    updated_at INTEGER
+                )
+            `, (err) => {
+                if (err) reject(err);
+                else resolve();
+            });
+        });
+    }
+
+    async save(def: WorkflowDefinition): Promise<void> {
+        await this.initPromise;
+        return new Promise((resolve, reject) => {
+            const stmt = this.db.prepare(`
+                INSERT INTO workflow_definitions (id, name, description, definition_json, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, ?, ?) 
+                ON CONFLICT(id) DO UPDATE SET 
+                    name=excluded.name, 
+                    description=excluded.description,
+                    definition_json=excluded.definition_json,
+                    updated_at=excluded.updated_at
+            `);
+            stmt.run(
+                def.id,
+                def.name,
+                def.description || null,
+                JSON.stringify(def.definition),
+                def.createdAt,
+                Date.now(),
+                (err: Error | null) => {
+                    if (err) reject(err);
+                    else resolve();
+                }
+            );
+            stmt.finalize();
+        });
+    }
+
+    async get(id: string): Promise<WorkflowDefinition | undefined> {
+        await this.initPromise;
+        return new Promise((resolve, reject) => {
+            this.db.get(`SELECT * FROM workflow_definitions WHERE id = ?`, [id], (err, row: any) => {
+                if (err) reject(err);
+                else if (!row) resolve(undefined);
+                else resolve({
+                    id: row.id,
+                    name: row.name,
+                    description: row.description,
+                    definition: JSON.parse(row.definition_json),
+                    createdAt: row.created_at,
+                    updatedAt: row.updated_at
+                });
+            });
+        });
+    }
+
+    async list(): Promise<WorkflowDefinition[]> {
+        await this.initPromise;
+        return new Promise((resolve, reject) => {
+            this.db.all(`SELECT * FROM workflow_definitions ORDER BY updated_at DESC`, [], (err, rows: any[]) => {
+                if (err) reject(err);
+                else resolve(rows.map(row => ({
+                    id: row.id,
+                    name: row.name,
+                    description: row.description,
+                    definition: JSON.parse(row.definition_json),
+                    createdAt: row.created_at,
+                    updatedAt: row.updated_at
+                })));
+            });
+        });
+    }
+
+    async delete(id: string): Promise<void> {
+        await this.initPromise;
+        return new Promise((resolve, reject) => {
+            this.db.run(`DELETE FROM workflow_definitions WHERE id = ?`, [id], (err) => {
+                if (err) reject(err);
+                else resolve();
             });
         });
     }

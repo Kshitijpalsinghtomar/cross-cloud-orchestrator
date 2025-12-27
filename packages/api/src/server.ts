@@ -4,7 +4,9 @@ import {
     WorkflowEngine,
     WorkflowSpec,
     CloudAdapter,
-    SqliteStateStore
+    SqliteStateStore,
+    SqliteDefinitionStore,
+    WorkflowDefinition
 } from '@cc-orch/core';
 import { MockAdapter } from './mock-adapter';
 
@@ -40,9 +42,70 @@ const engine = new WorkflowEngine(stateStore);
 adapters.forEach((adapter, name) => engine.registerAdapter(name, adapter));
 
 // Start Recovery Process
+// Start Recovery Process
 engine.recover().catch((err: any) => console.error("Failed to recover workflows:", err));
 
+// --- Definition Store Setup ---
+const definitionStore = new SqliteDefinitionStore('./orchestrator.db');
+
 // --- Routes ---
+
+// 0. Workflow Definitions (CRUD)
+app.post('/definitions', async (req: Request, res: Response) => {
+    try {
+        const { id, name, description, definition } = req.body;
+        if (!id || !definition) {
+            res.status(400).json({ error: "Missing required fields: id, definition" });
+            return;
+        }
+
+        const now = Date.now();
+        const def: WorkflowDefinition = {
+            id,
+            name: name || id,
+            description,
+            definition,
+            createdAt: now,
+            updatedAt: now
+        };
+
+        await definitionStore.save(def);
+        res.status(200).json({ message: "Definition saved", id });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/definitions', async (req: Request, res: Response) => {
+    try {
+        const defs = await definitionStore.list();
+        res.json(defs);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/definitions/:id', async (req: Request, res: Response) => {
+    try {
+        const def = await definitionStore.get(req.params.id);
+        if (!def) {
+            res.status(404).json({ error: "Definition not found" });
+            return;
+        }
+        res.json(def);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete('/definitions/:id', async (req: Request, res: Response) => {
+    try {
+        await definitionStore.delete(req.params.id);
+        res.json({ message: "Definition deleted" });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 // 1. Submit/Start Workflow
 app.post('/executions', async (req: Request, res: Response) => {
