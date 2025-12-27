@@ -1,6 +1,7 @@
 import { useWorkflows } from '../hooks/useWorkflows';
 import StatusBadge from './StatusBadge';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { Clock, Play, CheckCircle2, AlertCircle, ArrowRight, Activity, Search, Filter } from 'lucide-react';
 
 function StatsCard({ title, value, icon: Icon, colorClass, bgClass }: any) {
@@ -18,13 +19,24 @@ function StatsCard({ title, value, icon: Icon, colorClass, bgClass }: any) {
 }
 
 export default function WorkflowList() {
-    const { data: executions, isLoading } = useWorkflows();
+    const { data: allExecutions, isLoading } = useWorkflows();
+    const [page, setPage] = useState(1);
+    const PAGE_SIZE = 5;
 
     if (isLoading) return <div className="flex items-center justify-center h-64 text-[var(--text-muted)] animate-pulse">Loading Dashboard...</div>;
 
-    const total = executions?.length || 0;
-    const completed = executions?.filter(e => e.status === 'COMPLETED').length || 0;
-    const failed = executions?.filter(e => e.status === 'FAILED').length || 0;
+    const executions = allExecutions || [];
+    const total = executions.length;
+    const completed = executions.filter(e => e.status === 'COMPLETED').length;
+    const failed = executions.filter(e => e.status === 'FAILED').length;
+
+    // Pagination Logic
+    const totalPages = Math.ceil(total / PAGE_SIZE);
+    const startIndex = (page - 1) * PAGE_SIZE;
+    const currentExecutions = executions.slice(startIndex, startIndex + PAGE_SIZE);
+
+    const handleNext = () => setPage(p => Math.min(totalPages, p + 1));
+    const handlePrev = () => setPage(p => Math.max(1, p - 1));
 
     return (
         <div className="space-y-8">
@@ -63,12 +75,12 @@ export default function WorkflowList() {
                         />
                     </div>
                     <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
-                        <span className="font-medium text-[var(--text-main)]">{total}</span> results
+                        <span className="font-medium text-[var(--text-main)]">{startIndex + 1}-{Math.min(startIndex + PAGE_SIZE, total)}</span> of <span className="font-medium text-[var(--text-main)]">{total}</span>
                     </div>
                 </div>
 
                 <div className="divide-y divide-[var(--border-subtle)]">
-                    {executions?.map((exec) => (
+                    {currentExecutions.map((exec) => (
                         <div
                             key={exec.id}
                             className="p-5 hover:bg-[var(--bg-app)] transition-colors group flex items-center justify-between"
@@ -98,7 +110,7 @@ export default function WorkflowList() {
                         </div>
                     ))}
 
-                    {executions?.length === 0 && (
+                    {total === 0 && (
                         <div className="p-16 text-center">
                             <div className="w-16 h-16 bg-[var(--bg-app)] rounded-full flex items-center justify-center mx-auto mb-4 text-[var(--text-muted)]">
                                 <Activity className="w-8 h-8" />
@@ -108,6 +120,27 @@ export default function WorkflowList() {
                         </div>
                     )}
                 </div>
+
+                {/* Pagination Controls */}
+                {total > PAGE_SIZE && (
+                    <div className="p-4 border-t border-[var(--border-main)] flex justify-between items-center bg-[var(--bg-app)]">
+                        <button
+                            onClick={handlePrev}
+                            disabled={page === 1}
+                            className="px-3 py-1 text-sm border border-[var(--border-subtle)] rounded bg-[var(--bg-panel)] disabled:opacity-50 hover:bg-[var(--bg-subtle)] transition-colors"
+                        >
+                            Previous
+                        </button>
+                        <span className="text-xs text-[var(--text-muted)]">Page {page} of {totalPages}</span>
+                        <button
+                            onClick={handleNext}
+                            disabled={page === totalPages}
+                            className="px-3 py-1 text-sm border border-[var(--border-subtle)] rounded bg-[var(--bg-panel)] disabled:opacity-50 hover:bg-[var(--bg-subtle)] transition-colors"
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
