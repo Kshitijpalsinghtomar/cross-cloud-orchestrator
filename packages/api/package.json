@@ -8,7 +8,7 @@
         "@cc-orch/database": "^1.0.0",
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.6",
-        "axios": "^1.13.2",
+        "axios": "^1.13.5",
         "body-parser": "^2.2.1",
         "cors": "^2.8.5",
         "express": "^5.2.1"
