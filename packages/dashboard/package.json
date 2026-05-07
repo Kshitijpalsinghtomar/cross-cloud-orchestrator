@@ -12,7 +12,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.12",
-    "axios": "^1.13.5",
+    "axios": "^1.16.0",
     "clsx": "^2.1.1",
     "d3-scale": "^4.0.2",
     "framer-motion": "^12.23.26",
@@ -21,7 +21,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hot-toast": "^2.6.0",
-    "react-router-dom": "^7.11.0",
+    "react-router-dom": "^7.15.0",
     "react-simple-maps": "^3.0.0",
     "reactflow": "^11.11.4",
     "tailwind-merge": "^3.4.0",
@@ -39,6 +39,6 @@
     "globals": "^16.5.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^7.2.4"
+    "vite": "^7.3.2"
   }
 }
